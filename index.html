@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apple TV Controller</title>
+    <!-- PrismJS Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
         * { box-sizing: border-box; }
         body {
@@ -270,7 +272,7 @@
 
 <h4>Configuration des applications (apps.json)</h4>
 
-<pre><code>{
+<pre><code class="language-json">{
   "netflix": "com.netflix.Netflix",
   "youtube": "com.google.ios.youtube",
   "disney": "com.disney.disneyplus"
@@ -291,7 +293,7 @@
 
 <h4>Configuration des scenarios (scenarios.json)</h4>
 
-<pre><code>{
+<pre><code class="language-json">{
   "netflix_profil1": {
     "description": "Lancer Netflix et selectionner le premier profil",
     "steps": [
@@ -343,7 +345,7 @@
 
 <h4>Configuration des planifications (schedule.json)</h4>
 
-<pre><code>{
+<pre><code class="language-json">{
   "schedules": [
     {
       "scenario": "netflix_profil1",
@@ -420,7 +422,7 @@
 
 <p>Creer <code>~/Library/LaunchAgents/com.appletv.scheduler.plist</code> :</p>
 
-<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
 &lt;plist version="1.0"&gt;
 &lt;dict&gt;
@@ -482,5 +484,10 @@ document.querySelectorAll('.cmd .copy-btn').forEach(function(btn) {
     });
 });
 </script>
+<!-- PrismJS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
 </body>
 </html>
