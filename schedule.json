@@ -3,16 +3,31 @@
     {
       "scenario": "netflix_profil1",
       "device": "Salon",
-      "time": {"hour": 20, "minute": 0},
-      "weekdays": [1, 2, 3, 4, 5],
-      "enabled": true
+      "time": {
+        "hour": 20,
+        "minute": 0
+      },
+      "enabled": true,
+      "weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
     },
     {
       "scenario": "canal_direct",
       "device": "Salon",
-      "time": {"hour": 20, "minute": 30},
-      "weekdays": [0, 6],
-      "enabled": false
+      "time": {
+        "hour": 20,
+        "minute": 30
+      },
+      "enabled": false,
+      "weekdays": [
+        0,
+        6
+      ]
     }
   ]
 }
