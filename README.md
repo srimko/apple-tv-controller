@@ -198,6 +198,15 @@ Executez automatiquement des scenarios a des heures definies.
 | `scheduler` | Lancer le daemon |
 | `scheduler --daemon` | Lancer en arriere-plan |
 
+### Serveur HTTP
+
+Lancez un serveur HTTP pour declencher des scenarios depuis l'app Raccourcis iOS ou tout autre client HTTP.
+
+| Commande | Description |
+|----------|-------------|
+| `server` | Lancer le serveur HTTP (port 8888) |
+| `server --port 9000` | Lancer sur un port specifique |
+
 ```bash
 # Lister les planifications
 python3 apple_tv_power.py schedules
@@ -238,6 +247,47 @@ python3 apple_tv_power.py scheduler --daemon
 | `time` | object | `{"hour": 0-23, "minute": 0-59}` |
 | `weekdays` | array | Jours (0=Dim, 1=Lun, ..., 6=Sam). Optionnel |
 | `enabled` | bool | Activer/desactiver sans supprimer |
+
+#### API HTTP
+
+Lancer le serveur :
+```bash
+python3 apple_tv_power.py server
+```
+
+Endpoints disponibles :
+
+| Methode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/health` | Verifier que le serveur tourne |
+| GET | `/scenarios` | Lister les scenarios disponibles |
+| POST | `/scenario/{name}?device=Salon` | Executer un scenario |
+| POST | `/shutdown` | Arreter le serveur proprement |
+
+Exemples avec curl :
+```bash
+# Health check
+curl http://localhost:8888/health
+
+# Lister les scenarios
+curl http://localhost:8888/scenarios
+
+# Executer un scenario
+curl -X POST "http://localhost:8888/scenario/netflix_profil1?device=Salon"
+
+# Arreter le serveur
+curl -X POST http://localhost:8888/shutdown
+```
+
+#### Usage avec Raccourcis iOS
+
+1. Ouvrir l'app Raccourcis
+2. Creer un nouveau raccourci
+3. Ajouter l'action "Obtenir le contenu de l'URL"
+4. Configurer :
+   - URL : `http://192.168.1.XX:8888/scenario/netflix_profil1?device=Salon`
+   - Methode : POST
+5. Optionnel : Ajouter "Afficher le resultat" pour voir la reponse
 
 ---
 

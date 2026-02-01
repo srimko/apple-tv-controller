@@ -208,6 +208,7 @@
     <a href="#applications">Applications</a>
     <a href="#scenarios">Scenarios</a>
     <a href="#planification">Planification</a>
+    <a href="#serveur-http">Serveur HTTP</a>
 
     <h3>Reference</h3>
     <a href="#options">Options globales</a>
@@ -438,6 +439,75 @@ python3 apple_tv_power.py select -d "Salon"</code></pre>
     <tr><td><code>weekdays</code></td><td>array</td><td>Jours (0=Dim, 1=Lun, ..., 6=Sam). Optionnel</td></tr>
     <tr><td><code>enabled</code></td><td>bool</td><td>Activer/desactiver sans supprimer</td></tr>
 </table>
+
+<h3 id="serveur-http">Serveur HTTP</h3>
+
+<p>Lancez un serveur HTTP pour declencher des scenarios depuis l'app Raccourcis iOS ou tout autre client HTTP.</p>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>server</code></td><td>Lancer le serveur HTTP (port 8888)</td></tr>
+    <tr><td><code>server --port 9000</code></td><td>Lancer sur un port specifique</td></tr>
+</table>
+
+<p>Lancer le serveur :</p>
+<div class="cmd"><code>python3 apple_tv_power.py server</code><button class="copy-btn">Copier</button></div>
+
+<p>Lancer sur un port specifique :</p>
+<div class="cmd"><code>python3 apple_tv_power.py server --port 9000</code><button class="copy-btn">Copier</button></div>
+
+<h4>Endpoints API</h4>
+
+<table>
+    <tr><th>Methode</th><th>Endpoint</th><th>Description</th></tr>
+    <tr><td>GET</td><td><code>/health</code></td><td>Verifier que le serveur tourne</td></tr>
+    <tr><td>GET</td><td><code>/scenarios</code></td><td>Lister les scenarios disponibles</td></tr>
+    <tr><td>POST</td><td><code>/scenario/{name}?device=Salon</code></td><td>Executer un scenario</td></tr>
+    <tr><td>POST</td><td><code>/shutdown</code></td><td>Arreter le serveur proprement</td></tr>
+</table>
+
+<h4>Exemples avec curl</h4>
+
+<p>Health check :</p>
+<div class="cmd"><code>curl http://localhost:8888/health</code><button class="copy-btn">Copier</button></div>
+
+<p>Lister les scenarios :</p>
+<div class="cmd"><code>curl http://localhost:8888/scenarios</code><button class="copy-btn">Copier</button></div>
+
+<p>Executer un scenario :</p>
+<div class="cmd"><code>curl -X POST "http://localhost:8888/scenario/netflix_profil1?device=Salon"</code><button class="copy-btn">Copier</button></div>
+
+<p>Arreter le serveur :</p>
+<div class="cmd"><code>curl -X POST http://localhost:8888/shutdown</code><button class="copy-btn">Copier</button></div>
+
+<h4>Reponses JSON</h4>
+
+<p><strong>GET /scenarios</strong></p>
+<pre><code class="language-json">{
+  "scenarios": ["netflix_profil1", "canal_direct", "youtube_home"]
+}</code></pre>
+
+<p><strong>POST /scenario/netflix_profil1?device=Salon</strong></p>
+<pre><code class="language-json">{
+  "success": true,
+  "scenario": "netflix_profil1",
+  "device": "Salon"
+}</code></pre>
+
+<h4>Usage avec Raccourcis iOS</h4>
+
+<ol>
+    <li>Ouvrir l'app Raccourcis</li>
+    <li>Creer un nouveau raccourci</li>
+    <li>Ajouter l'action "Obtenir le contenu de l'URL"</li>
+    <li>Configurer :
+        <ul>
+            <li>URL : <code>http://192.168.1.XX:8888/scenario/netflix_profil1?device=Salon</code></li>
+            <li>Methode : POST</li>
+        </ul>
+    </li>
+    <li>Optionnel : Ajouter "Afficher le resultat" pour voir la reponse</li>
+</ol>
 
 <hr>
 

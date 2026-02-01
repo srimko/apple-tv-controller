@@ -29,6 +29,7 @@ from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
+from aiohttp import web
 import pyatv
 from pyatv.const import FeatureName, FeatureState, Protocol
 from pyatv.interface import AppleTV
@@ -1034,6 +1035,99 @@ async def run_scheduler() -> None:
 
 
 # =============================================================================
+# SERVEUR HTTP
+# =============================================================================
+
+SERVER_PORT = 8888
+
+
+async def http_health(request: web.Request) -> web.Response:
+    """Health check."""
+    return web.json_response({"status": "ok"})
+
+
+async def http_list_scenarios(request: web.Request) -> web.Response:
+    """Liste les scenarios disponibles."""
+    scenarios = load_scenarios()
+    return web.json_response({"scenarios": list(scenarios.keys())})
+
+
+async def http_run_scenario(request: web.Request) -> web.Response:
+    """Execute un scenario."""
+    name = request.match_info.get("name")
+    device_name = request.query.get("device", "Salon")
+
+    scenarios = load_scenarios()
+    if name not in scenarios:
+        return web.json_response(
+            {"success": False, "error": f"Scenario '{name}' non trouve"},
+            status=404,
+        )
+
+    try:
+        devices = await scan_devices()
+        device = select_device(devices, device_name)
+
+        async with connect_atv(device) as atv:
+            success = await run_scenario(atv, name)
+
+        return web.json_response({
+            "success": success,
+            "scenario": name,
+            "device": device_name,
+        })
+    except Exception as e:
+        return web.json_response(
+            {"success": False, "error": str(e)},
+            status=500,
+        )
+
+
+async def http_shutdown(request: web.Request) -> web.Response:
+    """Arrete le serveur proprement."""
+    logger.info("Arret du serveur demande...")
+
+    async def _shutdown():
+        await asyncio.sleep(0.5)
+        asyncio.get_event_loop().stop()
+
+    asyncio.create_task(_shutdown())
+    return web.json_response({"status": "shutting_down"})
+
+
+async def run_server(port: int = SERVER_PORT) -> None:
+    """Lance le serveur HTTP."""
+    app = web.Application()
+    app.router.add_get("/health", http_health)
+    app.router.add_get("/scenarios", http_list_scenarios)
+    app.router.add_post("/scenario/{name}", http_run_scenario)
+    app.router.add_post("/shutdown", http_shutdown)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+
+    print(f"Serveur HTTP demarre sur http://0.0.0.0:{port}")
+    print("Endpoints:")
+    print("  GET  /health")
+    print("  GET  /scenarios")
+    print("  POST /scenario/{name}?device=Salon")
+    print("  POST /shutdown")
+    print("\nCtrl+C pour arreter")
+
+    await site.start()
+
+    # Boucle infinie
+    try:
+        while True:
+            await asyncio.sleep(3600)
+    except asyncio.CancelledError:
+        pass
+    finally:
+        await runner.cleanup()
+
+
+# =============================================================================
 # CLI
 # =============================================================================
 
@@ -1118,6 +1212,10 @@ def create_parser() -> argparse.ArgumentParser:
         "--daemon", action="store_true", help="Lancer en arriere-plan"
     )
 
+    # Serveur HTTP
+    server_parser = subparsers.add_parser("server", help="Lancer le serveur HTTP", parents=[parent_parser])
+    server_parser.add_argument("--port", type=int, default=8888, help="Port (defaut: 8888)")
+
     return parser
 
 
@@ -1187,6 +1285,10 @@ async def main() -> int:
         else:
             await run_scheduler()
             return 0
+
+    if args.command == "server":
+        await run_server(args.port)
+        return 0
 
     # Commandes necessitant un appareil
     try:
