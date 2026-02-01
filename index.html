@@ -149,11 +149,44 @@
         .cmd .copy-btn.copied {
             background: #28a745;
         }
+        /* Quick Start block */
+        .quickstart-block {
+            position: relative;
+            margin: 15px 0;
+        }
+        .quickstart-block pre {
+            margin: 0;
+            padding-right: 80px;
+        }
+        .copy-block-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #555;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            opacity: 0.7;
+            transition: opacity 0.2s, background 0.2s;
+        }
+        .quickstart-block:hover .copy-block-btn {
+            opacity: 1;
+        }
+        .copy-block-btn:hover {
+            background: #777;
+        }
+        .copy-block-btn.copied {
+            background: #28a745;
+        }
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar { display: none; }
             .main { margin-left: 0; padding: 20px; }
             .copy-btn { opacity: 1; }
+            .copy-block-btn { opacity: 1; }
         }
     </style>
 </head>
@@ -163,6 +196,7 @@
     <div class="title">Apple TV Controller</div>
 
     <h3>Demarrage</h3>
+    <a href="#quickstart">Quick Start</a>
     <a href="#installation">Installation</a>
     <a href="#configuration">Configuration</a>
 
@@ -187,6 +221,27 @@
 <h1>Apple TV Controller</h1>
 
 <p>Script Python pour controler une Apple TV via le reseau local en utilisant la bibliotheque <a href="https://pyatv.dev/">pyatv</a>.</p>
+
+<h2 id="quickstart">Quick Start</h2>
+
+<p>Controlez votre Apple TV en 4 commandes. Remplacez "Salon" par le nom de votre Apple TV (visible dans Reglages > General > Nom).</p>
+
+<div class="quickstart-block">
+<pre><code class="language-bash"># Installer la bibliotheque pyatv
+pip install pyatv
+
+# Trouver les Apple TV sur votre reseau
+python3 apple_tv_power.py scan
+
+# Appairer (un code PIN s'affiche sur la TV)
+python3 apple_tv_power.py pair -d "Salon"
+
+# Tester : appuie sur le bouton "OK"
+python3 apple_tv_power.py select -d "Salon"</code></pre>
+<button class="copy-block-btn">Copier</button>
+</div>
+
+<hr>
 
 <h2 id="installation">Installation</h2>
 
@@ -512,6 +567,22 @@ document.querySelectorAll('.copy-icon').forEach(function(btn) {
             setTimeout(function() {
                 btn.classList.remove('copied');
             }, 1000);
+        });
+    });
+});
+
+// Handle Quick Start block copy button
+document.querySelectorAll('.copy-block-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var pre = btn.parentElement.querySelector('pre code');
+        var text = pre.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = 'Copie!';
+            btn.classList.add('copied');
+            setTimeout(function() {
+                btn.textContent = 'Copier';
+                btn.classList.remove('copied');
+            }, 2000);
         });
     });
 });

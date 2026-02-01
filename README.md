@@ -2,6 +2,26 @@
 
 Script Python pour controler une Apple TV via le reseau local en utilisant la bibliotheque [pyatv](https://pyatv.dev/).
 
+## Quick Start
+
+Controlez votre Apple TV en 4 commandes. Remplacez "Salon" par le nom de votre Apple TV (visible dans Reglages > General > Nom).
+
+```bash
+# Installer la bibliotheque pyatv
+pip install pyatv
+
+# Trouver les Apple TV sur votre reseau
+python3 apple_tv_power.py scan
+
+# Appairer (un code PIN s'affiche sur la TV)
+python3 apple_tv_power.py pair -d "Salon"
+
+# Tester : appuie sur le bouton "OK"
+python3 apple_tv_power.py select -d "Salon"
+```
+
+---
+
 ## Installation
 
 ```bash
