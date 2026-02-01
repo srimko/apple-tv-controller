@@ -1,6 +1,6 @@
 # Apple TV Controller
 
-Script Python pour contrôler une Apple TV via le réseau local en utilisant la bibliothèque [pyatv](https://pyatv.dev/).
+Script Python pour controler une Apple TV via le reseau local en utilisant la bibliotheque [pyatv](https://pyatv.dev/).
 
 ## Installation
 
@@ -16,36 +16,41 @@ pip install pyatv
 python3 apple_tv_power.py scan
 ```
 
-Affiche tous les appareils Apple TV/AirPlay sur le réseau avec leur nom, adresse IP et protocoles supportés.
+Affiche tous les appareils Apple TV/AirPlay sur le reseau avec leur nom, adresse IP et protocoles supportes.
 
 ### 2. Appairer avec une Apple TV
 
 ```bash
-python3 apple_tv_power.py pair --device "Salon"
+python3 apple_tv_power.py pair -d "Salon"
 ```
 
-Un code PIN s'affiche sur l'écran de l'Apple TV. Entrez-le dans le terminal pour valider l'appairage.
+Un code PIN s'affiche sur l'ecran de l'Apple TV. Entrez-le dans le terminal pour valider l'appairage.
 
-Les credentials sont sauvegardés dans `credentials.json` et réutilisés automatiquement.
-
-**Synchronisation automatique des applications :** Après un appairage réussi, le script récupère automatiquement la liste des applications installées sur l'Apple TV et met à jour le fichier `apps.json` avec les nouvelles applications trouvées.
+Les credentials sont sauvegardes dans `credentials.json` et reutilises automatiquement.
 
 ---
 
 ## Commandes disponibles
+
+### Aide
+
+```bash
+python3 apple_tv_power.py --help           # Aide generale
+python3 apple_tv_power.py <commande> --help # Aide pour une commande
+```
 
 ### Alimentation
 
 | Commande | Description |
 |----------|-------------|
 | `on` | Allumer l'Apple TV |
-| `off` | Éteindre l'Apple TV (mise en veille) |
-| `status` | Afficher l'état d'alimentation et les fonctionnalités disponibles |
+| `off` | Eteindre l'Apple TV (mise en veille) |
+| `status` | Afficher l'etat d'alimentation |
 
 ```bash
-python3 apple_tv_power.py on --device "Salon"
-python3 apple_tv_power.py off --device "Salon"
-python3 apple_tv_power.py status --device "Salon"
+python3 apple_tv_power.py on -d "Salon"
+python3 apple_tv_power.py off -d "Salon"
+python3 apple_tv_power.py status -d "Salon"
 ```
 
 ### Lecture
@@ -55,38 +60,30 @@ python3 apple_tv_power.py status --device "Salon"
 | `play` | Lancer la lecture |
 | `pause` | Mettre en pause |
 | `play_pause` | Toggle lecture/pause |
-| `stop` | Arrêter la lecture |
+| `stop` | Arreter la lecture |
 | `next` | Piste/chapitre suivant |
-| `previous` | Piste/chapitre précédent |
+| `previous` | Piste/chapitre precedent |
 
 ```bash
-python3 apple_tv_power.py play --device "Salon"
-python3 apple_tv_power.py pause --device "Salon"
-python3 apple_tv_power.py play_pause --device "Salon"
-python3 apple_tv_power.py next --device "Salon"
-python3 apple_tv_power.py previous --device "Salon"
+python3 apple_tv_power.py play -d "Salon"
+python3 apple_tv_power.py pause -d "Salon"
 ```
 
-### Télécommande
+### Telecommande
 
 | Commande | Description |
 |----------|-------------|
-| `up` | Flèche haut |
-| `down` | Flèche bas |
-| `left` | Flèche gauche |
-| `right` | Flèche droite |
-| `select` | Bouton OK/Sélection |
+| `up` | Fleche haut |
+| `down` | Fleche bas |
+| `left` | Fleche gauche |
+| `right` | Fleche droite |
+| `select` | Bouton OK/Selection |
 | `menu` | Bouton Menu (retour) |
 | `home` | Bouton Home (accueil) |
 
 ```bash
-python3 apple_tv_power.py up --device "Salon"
-python3 apple_tv_power.py down --device "Salon"
-python3 apple_tv_power.py left --device "Salon"
-python3 apple_tv_power.py right --device "Salon"
-python3 apple_tv_power.py select --device "Salon"
-python3 apple_tv_power.py menu --device "Salon"
-python3 apple_tv_power.py home --device "Salon"
+python3 apple_tv_power.py up -d "Salon"
+python3 apple_tv_power.py select -d "Salon"
 ```
 
 ### Volume
@@ -96,71 +93,154 @@ python3 apple_tv_power.py home --device "Salon"
 | `volume_up` | Augmenter le volume |
 | `volume_down` | Baisser le volume |
 | `volume` | Afficher le volume actuel |
-| `volume <0-100>` | Régler le volume à un niveau précis |
+| `volume <0-100>` | Regler le volume |
 
 ```bash
-python3 apple_tv_power.py volume_up --device "Salon"
-python3 apple_tv_power.py volume_down --device "Salon"
-python3 apple_tv_power.py volume --device "Salon"
-python3 apple_tv_power.py volume 50 --device "Salon"
+python3 apple_tv_power.py volume -d "Salon"
+python3 apple_tv_power.py volume 50 -d "Salon"
 ```
 
 ### Applications
 
 | Commande | Description |
 |----------|-------------|
-| `apps` | Lister les applications installées sur l'Apple TV |
-| `apps_config` | Afficher la configuration des alias (apps.json) |
-| `apps_sync` | Synchroniser apps.json avec les apps installées |
-| `launch <app>` | Lancer une application par son alias ou bundle ID |
+| `apps` | Lister les applications installees |
+| `apps_config` | Afficher la configuration des alias |
+| `apps_sync` | Synchroniser apps.json avec l'Apple TV |
+| `launch <app>` | Lancer une application |
 
 ```bash
-python3 apple_tv_power.py apps --device "Salon"
+python3 apple_tv_power.py apps -d "Salon"
 python3 apple_tv_power.py apps_config
-python3 apple_tv_power.py apps_sync --device "Salon"
-python3 apple_tv_power.py launch netflix --device "Salon"
+python3 apple_tv_power.py launch netflix -d "Salon"
 ```
 
 #### Configuration des applications (apps.json)
 
-Le fichier `apps.json` contient les alias pour les applications. Il est :
-- **Créé automatiquement** avec des apps courantes lors de la première utilisation
-- **Mis à jour automatiquement** après chaque appairage (`pair`) avec les apps installées sur l'Apple TV
+Le fichier `apps.json` contient les alias pour les applications :
 
-Exemple de contenu :
 ```json
 {
   "netflix": "com.netflix.Netflix",
   "youtube": "com.google.ios.youtube",
-  "disney": "com.disney.disneyplus",
-  "prime": "com.amazon.aiv.AIVApp",
-  "apple_tv": "com.apple.TVWatchList",
-  "spotify": "com.spotify.client",
-  "twitch": "tv.twitch"
+  "disney": "com.disney.disneyplus"
 }
 ```
 
-**Personnalisation :** Vous pouvez modifier les alias dans `apps.json` selon vos préférences. Les alias personnalisés sont conservés lors des synchronisations.
+### Scenarios
+
+Les scenarios permettent d'automatiser des sequences d'actions.
+
+| Commande | Description |
+|----------|-------------|
+| `scenarios` | Lister les scenarios disponibles |
+| `scenario <nom>` | Executer un scenario |
+
+```bash
+python3 apple_tv_power.py scenarios
+python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"
+```
+
+#### Configuration des scenarios (scenarios.json)
+
+```json
+{
+  "netflix_profil1": {
+    "description": "Lancer Netflix et selectionner le premier profil",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 3},
+      {"action": "select"}
+    ]
+  }
+}
+```
+
+**Actions disponibles :**
+
+| Action | Parametres | Description |
+|--------|------------|-------------|
+| `launch` | `app` | Lancer une application |
+| `wait` | `seconds` | Attendre N secondes |
+| `up/down/left/right` | `repeat` (optionnel) | Navigation |
+| `select/menu/home` | `repeat` (optionnel) | Boutons |
+| `play/pause/play_pause` | - | Controle lecture |
+
+### Planification
+
+Executez automatiquement des scenarios a des heures definies.
+
+| Commande | Description |
+|----------|-------------|
+| `schedules` | Lister les planifications |
+| `schedule-add` | Ajouter une planification (interactif) |
+| `schedule-remove <id>` | Supprimer une planification |
+| `scheduler` | Lancer le daemon |
+| `scheduler --daemon` | Lancer en arriere-plan |
+
+```bash
+# Lister les planifications
+python3 apple_tv_power.py schedules
+
+# Ajouter une planification (interactif)
+python3 apple_tv_power.py schedule-add
+
+# Supprimer la planification #0
+python3 apple_tv_power.py schedule-remove 0
+
+# Lancer le daemon (premier plan)
+python3 apple_tv_power.py scheduler
+
+# Lancer le daemon en arriere-plan
+python3 apple_tv_power.py scheduler --daemon
+```
+
+#### Configuration des planifications (schedule.json)
+
+```json
+{
+  "schedules": [
+    {
+      "scenario": "netflix_profil1",
+      "device": "Salon",
+      "time": {"hour": 20, "minute": 0},
+      "weekdays": [1, 2, 3, 4, 5],
+      "enabled": true
+    }
+  ]
+}
+```
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| `scenario` | string | Nom du scenario (de scenarios.json) |
+| `device` | string | Nom de l'Apple TV |
+| `time` | object | `{"hour": 0-23, "minute": 0-59}` |
+| `weekdays` | array | Jours (0=Dim, 1=Lun, ..., 6=Sam). Optionnel |
+| `enabled` | bool | Activer/desactiver sans supprimer |
 
 ---
 
-## Options
+## Options globales
 
-### Sélection de l'appareil
+| Option | Description |
+|--------|-------------|
+| `-d, --device` | Nom ou index de l'appareil |
+| `-v, --verbose` | Mode debug |
+| `-h, --help` | Aide |
 
-Si plusieurs appareils sont détectés, vous pouvez spécifier lequel utiliser :
+**Selection de l'appareil :**
 
-**Par nom (recherche partielle) :**
 ```bash
-python3 apple_tv_power.py on --device "Salon"
-```
+# Par nom (recherche partielle)
+python3 apple_tv_power.py on -d "Salon"
 
-**Par index :**
-```bash
-python3 apple_tv_power.py on --device 1
-```
+# Par index
+python3 apple_tv_power.py on -d 0
 
-Si `--device` n'est pas spécifié et plusieurs appareils sont trouvés, le script demande de choisir.
+# Interactif (si plusieurs appareils)
+python3 apple_tv_power.py on
+```
 
 ---
 
@@ -169,74 +249,87 @@ Si `--device` n'est pas spécifié et plusieurs appareils sont trouvés, le scri
 | Fichier | Description |
 |---------|-------------|
 | `apple_tv_power.py` | Script principal |
-| `credentials.json` | Credentials d'appairage (créé automatiquement) |
-| `apps.json` | Configuration des alias d'applications (créé automatiquement) |
+| `credentials.json` | Credentials d'appairage |
+| `apps.json` | Alias des applications |
+| `scenarios.json` | Configuration des scenarios |
+| `schedule.json` | Planifications horaires |
+| `scheduler.log` | Logs du daemon (si --daemon) |
 
 ---
 
-## Dépannage
+## Exemples
 
-### "Aucune fonctionnalité d'alimentation disponible"
+### Lancer Netflix a 20h en semaine
 
-Vous devez d'abord appairer l'appareil :
 ```bash
-python3 apple_tv_power.py pair --device "Salon"
-```
+# Ajouter via l'interface interactive
+python3 apple_tv_power.py schedule-add
 
-### "Aucune Apple TV trouvée"
-
-- Vérifiez que l'Apple TV est allumée
-- Vérifiez que vous êtes sur le même réseau Wi-Fi
-- Attendez quelques secondes et réessayez
-
-### "Erreur d'authentification"
-
-Les credentials ont peut-être expiré. Refaites un appairage :
-```bash
-python3 apple_tv_power.py pair --device "Salon"
-```
-
-### "Timeout"
-
-L'Apple TV n'a pas répondu dans les 10 secondes. Vérifiez qu'elle est accessible sur le réseau.
-
----
-
-## Protocoles utilisés
-
-| Protocole | Fonctionnalités |
-|-----------|-----------------|
-| **Companion** | Power on/off, télécommande, apps (le plus fiable) |
-| **MRP** | Télécommande, métadonnées, power (moins fiable) |
-| **AirPlay** | Streaming audio/vidéo |
-| **RAOP** | Streaming audio uniquement |
-
-Le script utilise principalement le protocole **Companion** pour les fonctionnalités d'alimentation car il est le plus fiable.
-
----
-
-## Exemples d'utilisation
-
-### Allumer la TV et naviguer
-```bash
-python3 apple_tv_power.py on --device "Salon"
-sleep 5
-python3 apple_tv_power.py right --device "Salon"
-python3 apple_tv_power.py select --device "Salon"
+# Ou editer schedule.json directement
 ```
 
 ### Script d'extinction automatique
+
 ```bash
 #!/bin/bash
-python3 apple_tv_power.py off --device "Salon"
-echo "Apple TV éteinte"
+python3 apple_tv_power.py off -d "Salon"
 ```
 
-### Contrôle du volume
+### Demarrer le scheduler au boot (macOS)
+
+Creer `~/Library/LaunchAgents/com.appletv.scheduler.plist` :
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.appletv.scheduler</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/chemin/vers/apple_tv_power.py</string>
+        <string>scheduler</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+</dict>
+</plist>
+```
+
 ```bash
-# Baisser le volume de 5 crans
-for i in {1..5}; do
-    python3 apple_tv_power.py volume_down --device "Salon"
-    sleep 0.5
-done
+launchctl load ~/Library/LaunchAgents/com.appletv.scheduler.plist
+```
+
+---
+
+## Depannage
+
+### "Aucune Apple TV trouvee"
+
+- Verifiez que l'Apple TV est allumee
+- Verifiez que vous etes sur le meme reseau Wi-Fi
+
+### "Erreur d'authentification"
+
+Refaites un appairage :
+```bash
+python3 apple_tv_power.py pair -d "Salon"
+```
+
+### "Fonctionnalite non disponible"
+
+Vous devez d'abord appairer l'appareil :
+```bash
+python3 apple_tv_power.py pair -d "Salon"
+```
+
+### Mode debug
+
+Utilisez `-v` pour plus de details :
+```bash
+python3 apple_tv_power.py on -d "Salon" -v
 ```
