@@ -35,13 +35,21 @@
     "steps": [
       {"action": "launch", "app": "youtube"},
       {"action": "wait", "seconds": 2},
-      {"action": "home"}
+      {"action": "select"}
     ]
   },
   "disney_profil1": {
     "description": "Lancer Disney+ et sélectionner le premier profil",
     "steps": [
       {"action": "launch", "app": "disney"},
+      {"action": "wait", "seconds": 3},
+      {"action": "select"}
+    ]
+  },
+  "forme": {
+    "description": "Lancer l'application Forme (Fitness)",
+    "steps": [
+      {"action": "launch", "app": "forme"},
       {"action": "wait", "seconds": 3},
       {"action": "select"}
     ]

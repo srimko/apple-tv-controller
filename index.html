@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple TV Controller</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background: #f5f5f5;
+        }
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            height: 100vh;
+            background: #2d2d2d;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            color: #fff;
+            font-size: 14px;
+            padding: 0 15px;
+            margin: 15px 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sidebar a {
+            display: block;
+            color: #ccc;
+            text-decoration: none;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        .sidebar a:hover {
+            background: #444;
+            color: #fff;
+        }
+        .sidebar .title {
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 15px 20px;
+            border-bottom: 1px solid #444;
+        }
+        /* Main content */
+        .main {
+            margin-left: 220px;
+            padding: 30px 40px;
+            max-width: 900px;
+        }
+        h1, h2, h3 { color: #333; }
+        h1 { border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 40px; }
+        code {
+            background: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th { background: #e8e8e8; }
+        tr:nth-child(even) { background: #fafafa; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 30px 0; }
+        /* Command lines with copy button */
+        .cmd {
+            display: flex;
+            align-items: center;
+            background: #2d2d2d;
+            margin: 0;
+            border-radius: 3px;
+            border-bottom: 1px solid #444;
+        }
+        .cmd + .cmd { border-radius: 0; }
+        .cmd:not(.cmd + .cmd) { border-radius: 3px 3px 0 0; }
+        .cmd:not(:has(+ .cmd)) { border-radius: 0 0 3px 3px; border-bottom: none; }
+        .cmd:not(.cmd + .cmd):not(:has(+ .cmd)) { border-radius: 3px; }
+        .cmd code {
+            flex: 1;
+            background: none;
+            color: #f8f8f2;
+            padding: 10px 15px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .cmd .copy-btn {
+            background: #555;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .cmd:hover .copy-btn {
+            opacity: 1;
+        }
+        .cmd .copy-btn:hover {
+            background: #777;
+        }
+        .cmd .copy-btn.copied {
+            background: #28a745;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 20px; }
+            .copy-btn { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="sidebar">
+    <div class="title">Apple TV Controller</div>
+
+    <h3>Demarrage</h3>
+    <a href="#installation">Installation</a>
+    <a href="#configuration">Configuration</a>
+
+    <h3>Commandes</h3>
+    <a href="#alimentation">Alimentation</a>
+    <a href="#lecture">Lecture</a>
+    <a href="#telecommande">Telecommande</a>
+    <a href="#volume">Volume</a>
+    <a href="#applications">Applications</a>
+    <a href="#scenarios">Scenarios</a>
+    <a href="#planification">Planification</a>
+
+    <h3>Reference</h3>
+    <a href="#options">Options globales</a>
+    <a href="#fichiers">Fichiers</a>
+    <a href="#exemples">Exemples</a>
+    <a href="#depannage">Depannage</a>
+</nav>
+
+<main class="main">
+
+<h1>Apple TV Controller</h1>
+
+<p>Script Python pour controler une Apple TV via le reseau local en utilisant la bibliotheque <a href="https://pyatv.dev/">pyatv</a>.</p>
+
+<h2 id="installation">Installation</h2>
+
+<div class="cmd"><code>pip install pyatv</code><button class="copy-btn">Copier</button></div>
+
+<h2 id="configuration">Configuration initiale</h2>
+
+<h3>1. Scanner les appareils disponibles</h3>
+
+<div class="cmd"><code>python3 apple_tv_power.py scan</code><button class="copy-btn">Copier</button></div>
+
+<p>Affiche tous les appareils Apple TV/AirPlay sur le reseau avec leur nom, adresse IP et protocoles supportes.</p>
+
+<h3>2. Appairer avec une Apple TV</h3>
+
+<div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<p>Un code PIN s'affiche sur l'ecran de l'Apple TV. Entrez-le dans le terminal pour valider l'appairage.</p>
+
+<p>Les credentials sont sauvegardes dans <code>credentials.json</code> et reutilises automatiquement.</p>
+
+<hr>
+
+<h2>Commandes disponibles</h2>
+
+<h3>Aide</h3>
+
+<div class="cmd"><code>python3 apple_tv_power.py --help</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py &lt;commande&gt; --help</code><button class="copy-btn">Copier</button></div>
+
+<h3 id="alimentation">Alimentation</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>on</code></td><td>Allumer l'Apple TV</td></tr>
+    <tr><td><code>off</code></td><td>Eteindre l'Apple TV (mise en veille)</td></tr>
+    <tr><td><code>status</code></td><td>Afficher l'etat d'alimentation</td></tr>
+</table>
+
+<div class="cmd"><code>python3 apple_tv_power.py on -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py off -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py status -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3 id="lecture">Lecture</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>play</code></td><td>Lancer la lecture</td></tr>
+    <tr><td><code>pause</code></td><td>Mettre en pause</td></tr>
+    <tr><td><code>play_pause</code></td><td>Toggle lecture/pause</td></tr>
+    <tr><td><code>stop</code></td><td>Arreter la lecture</td></tr>
+    <tr><td><code>next</code></td><td>Piste/chapitre suivant</td></tr>
+    <tr><td><code>previous</code></td><td>Piste/chapitre precedent</td></tr>
+</table>
+
+<div class="cmd"><code>python3 apple_tv_power.py play -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py pause -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3 id="telecommande">Telecommande</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>up</code></td><td>Fleche haut</td></tr>
+    <tr><td><code>down</code></td><td>Fleche bas</td></tr>
+    <tr><td><code>left</code></td><td>Fleche gauche</td></tr>
+    <tr><td><code>right</code></td><td>Fleche droite</td></tr>
+    <tr><td><code>select</code></td><td>Bouton OK/Selection</td></tr>
+    <tr><td><code>menu</code></td><td>Bouton Menu (retour)</td></tr>
+    <tr><td><code>home</code></td><td>Bouton Home (accueil)</td></tr>
+</table>
+
+<div class="cmd"><code>python3 apple_tv_power.py up -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py select -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3 id="volume">Volume</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>volume_up</code></td><td>Augmenter le volume</td></tr>
+    <tr><td><code>volume_down</code></td><td>Baisser le volume</td></tr>
+    <tr><td><code>volume</code></td><td>Afficher le volume actuel</td></tr>
+    <tr><td><code>volume &lt;0-100&gt;</code></td><td>Regler le volume</td></tr>
+</table>
+
+<div class="cmd"><code>python3 apple_tv_power.py volume -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py volume 50 -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3 id="applications">Applications</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>apps</code></td><td>Lister les applications installees</td></tr>
+    <tr><td><code>apps_config</code></td><td>Afficher la configuration des alias</td></tr>
+    <tr><td><code>apps_sync</code></td><td>Synchroniser apps.json avec l'Apple TV</td></tr>
+    <tr><td><code>launch &lt;app&gt;</code></td><td>Lancer une application</td></tr>
+</table>
+
+<div class="cmd"><code>python3 apple_tv_power.py apps -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py apps_config</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py launch netflix -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h4>Configuration des applications (apps.json)</h4>
+
+<pre><code>{
+  "netflix": "com.netflix.Netflix",
+  "youtube": "com.google.ios.youtube",
+  "disney": "com.disney.disneyplus"
+}</code></pre>
+
+<h3 id="scenarios">Scenarios</h3>
+
+<p>Les scenarios permettent d'automatiser des sequences d'actions.</p>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>scenarios</code></td><td>Lister les scenarios disponibles</td></tr>
+    <tr><td><code>scenario &lt;nom&gt;</code></td><td>Executer un scenario</td></tr>
+</table>
+
+<div class="cmd"><code>python3 apple_tv_power.py scenarios</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h4>Configuration des scenarios (scenarios.json)</h4>
+
+<pre><code>{
+  "netflix_profil1": {
+    "description": "Lancer Netflix et selectionner le premier profil",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 3},
+      {"action": "select"}
+    ]
+  }
+}</code></pre>
+
+<p><strong>Actions disponibles :</strong></p>
+
+<table>
+    <tr><th>Action</th><th>Parametres</th><th>Description</th></tr>
+    <tr><td><code>launch</code></td><td><code>app</code></td><td>Lancer une application</td></tr>
+    <tr><td><code>wait</code></td><td><code>seconds</code></td><td>Attendre N secondes</td></tr>
+    <tr><td><code>up/down/left/right</code></td><td><code>repeat</code> (optionnel)</td><td>Navigation</td></tr>
+    <tr><td><code>select/menu/home</code></td><td><code>repeat</code> (optionnel)</td><td>Boutons</td></tr>
+    <tr><td><code>play/pause/play_pause</code></td><td>-</td><td>Controle lecture</td></tr>
+</table>
+
+<h3 id="planification">Planification</h3>
+
+<p>Executez automatiquement des scenarios a des heures definies.</p>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>schedules</code></td><td>Lister les planifications</td></tr>
+    <tr><td><code>schedule-add</code></td><td>Ajouter une planification (interactif)</td></tr>
+    <tr><td><code>schedule-remove &lt;id&gt;</code></td><td>Supprimer une planification</td></tr>
+    <tr><td><code>scheduler</code></td><td>Lancer le daemon</td></tr>
+    <tr><td><code>scheduler --daemon</code></td><td>Lancer en arriere-plan</td></tr>
+</table>
+
+<p>Lister les planifications :</p>
+<div class="cmd"><code>python3 apple_tv_power.py schedules</code><button class="copy-btn">Copier</button></div>
+
+<p>Ajouter une planification (interactif) :</p>
+<div class="cmd"><code>python3 apple_tv_power.py schedule-add</code><button class="copy-btn">Copier</button></div>
+
+<p>Supprimer la planification #0 :</p>
+<div class="cmd"><code>python3 apple_tv_power.py schedule-remove 0</code><button class="copy-btn">Copier</button></div>
+
+<p>Lancer le daemon (premier plan) :</p>
+<div class="cmd"><code>python3 apple_tv_power.py scheduler</code><button class="copy-btn">Copier</button></div>
+
+<p>Lancer le daemon en arriere-plan :</p>
+<div class="cmd"><code>python3 apple_tv_power.py scheduler --daemon</code><button class="copy-btn">Copier</button></div>
+
+<h4>Configuration des planifications (schedule.json)</h4>
+
+<pre><code>{
+  "schedules": [
+    {
+      "scenario": "netflix_profil1",
+      "device": "Salon",
+      "time": {"hour": 20, "minute": 0},
+      "weekdays": [1, 2, 3, 4, 5],
+      "enabled": true
+    }
+  ]
+}</code></pre>
+
+<table>
+    <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+    <tr><td><code>scenario</code></td><td>string</td><td>Nom du scenario (de scenarios.json)</td></tr>
+    <tr><td><code>device</code></td><td>string</td><td>Nom de l'Apple TV</td></tr>
+    <tr><td><code>time</code></td><td>object</td><td><code>{"hour": 0-23, "minute": 0-59}</code></td></tr>
+    <tr><td><code>weekdays</code></td><td>array</td><td>Jours (0=Dim, 1=Lun, ..., 6=Sam). Optionnel</td></tr>
+    <tr><td><code>enabled</code></td><td>bool</td><td>Activer/desactiver sans supprimer</td></tr>
+</table>
+
+<hr>
+
+<h2 id="options">Options globales</h2>
+
+<table>
+    <tr><th>Option</th><th>Description</th></tr>
+    <tr><td><code>-d, --device</code></td><td>Nom ou index de l'appareil</td></tr>
+    <tr><td><code>-v, --verbose</code></td><td>Mode debug</td></tr>
+    <tr><td><code>-h, --help</code></td><td>Aide</td></tr>
+</table>
+
+<p><strong>Selection de l'appareil :</strong></p>
+
+<p>Par nom (recherche partielle) :</p>
+<div class="cmd"><code>python3 apple_tv_power.py on -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<p>Par index :</p>
+<div class="cmd"><code>python3 apple_tv_power.py on -d 0</code><button class="copy-btn">Copier</button></div>
+
+<p>Interactif (si plusieurs appareils) :</p>
+<div class="cmd"><code>python3 apple_tv_power.py on</code><button class="copy-btn">Copier</button></div>
+
+<hr>
+
+<h2 id="fichiers">Fichiers</h2>
+
+<table>
+    <tr><th>Fichier</th><th>Description</th></tr>
+    <tr><td><code>apple_tv_power.py</code></td><td>Script principal</td></tr>
+    <tr><td><code>credentials.json</code></td><td>Credentials d'appairage</td></tr>
+    <tr><td><code>apps.json</code></td><td>Alias des applications</td></tr>
+    <tr><td><code>scenarios.json</code></td><td>Configuration des scenarios</td></tr>
+    <tr><td><code>schedule.json</code></td><td>Planifications horaires</td></tr>
+    <tr><td><code>scheduler.log</code></td><td>Logs du daemon (si --daemon)</td></tr>
+</table>
+
+<hr>
+
+<h2 id="exemples">Exemples</h2>
+
+<h3>Lancer Netflix a 20h en semaine</h3>
+
+<p>Ajouter via l'interface interactive :</p>
+<div class="cmd"><code>python3 apple_tv_power.py schedule-add</code><button class="copy-btn">Copier</button></div>
+
+<p>Ou editer <code>schedule.json</code> directement.</p>
+
+<h3>Script d'extinction automatique</h3>
+
+<div class="cmd"><code>#!/bin/bash</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py off -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3>Demarrer le scheduler au boot (macOS)</h3>
+
+<p>Creer <code>~/Library/LaunchAgents/com.appletv.scheduler.plist</code> :</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+    &lt;key&gt;Label&lt;/key&gt;
+    &lt;string&gt;com.appletv.scheduler&lt;/string&gt;
+    &lt;key&gt;ProgramArguments&lt;/key&gt;
+    &lt;array&gt;
+        &lt;string&gt;/usr/bin/python3&lt;/string&gt;
+        &lt;string&gt;/chemin/vers/apple_tv_power.py&lt;/string&gt;
+        &lt;string&gt;scheduler&lt;/string&gt;
+    &lt;/array&gt;
+    &lt;key&gt;RunAtLoad&lt;/key&gt;
+    &lt;true/&gt;
+    &lt;key&gt;KeepAlive&lt;/key&gt;
+    &lt;true/&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;</code></pre>
+
+<div class="cmd"><code>launchctl load ~/Library/LaunchAgents/com.appletv.scheduler.plist</code><button class="copy-btn">Copier</button></div>
+
+<hr>
+
+<h2 id="depannage">Depannage</h2>
+
+<h3>"Aucune Apple TV trouvee"</h3>
+<ul>
+    <li>Verifiez que l'Apple TV est allumee</li>
+    <li>Verifiez que vous etes sur le meme reseau Wi-Fi</li>
+</ul>
+
+<h3>"Erreur d'authentification"</h3>
+<p>Refaites un appairage :</p>
+<div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3>"Fonctionnalite non disponible"</h3>
+<p>Vous devez d'abord appairer l'appareil :</p>
+<div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3>Mode debug</h3>
+<p>Utilisez <code>-v</code> pour plus de details :</p>
+<div class="cmd"><code>python3 apple_tv_power.py on -d "Salon" -v</code><button class="copy-btn">Copier</button></div>
+
+</main>
+
+<script>
+// Handle copy buttons for individual command lines
+document.querySelectorAll('.cmd .copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var code = btn.parentElement.querySelector('code');
+        var text = code.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = 'Copie!';
+            btn.classList.add('copied');
+            setTimeout(function() {
+                btn.textContent = 'Copier';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    });
+});
+</script>
+</body>
+</html>

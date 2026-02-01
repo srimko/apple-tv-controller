@@ -317,44 +317,77 @@ def select_device(
 # =============================================================================
 
 
-async def pair_device(device_config: pyatv.interface.BaseConfig) -> Optional[str]:
-    """Lance l'appairage avec une Apple TV."""
-    has_companion = any(
-        s.protocol == Protocol.Companion for s in device_config.services
-    )
-
-    if not has_companion:
-        logger.error(f"{device_config.name} ne supporte pas le protocole Companion.")
-        return None
-
-    logger.info(f"Appairage avec {device_config.name}...")
+async def pair_protocol(
+    device_config: pyatv.interface.BaseConfig, protocol: Protocol
+) -> Optional[str]:
+    """Appaire un protocole specifique."""
+    logger.info(f"\n--- Appairage {protocol.name} ---")
     logger.info("Un code PIN va s'afficher sur votre Apple TV.\n")
 
     pairing = await pyatv.pair(
-        device_config, Protocol.Companion, asyncio.get_running_loop()
+        device_config, protocol, asyncio.get_running_loop()
     )
 
     try:
         await pairing.begin()
 
         if pairing.device_provides_pin:
-            pin = input("Entrez le code PIN: ")
+            pin = input(f"Entrez le code PIN pour {protocol.name}: ")
             pairing.pin(pin)
 
         await pairing.finish()
 
         if pairing.has_paired:
-            logger.info("\nAppairage reussi!")
+            logger.info(f"Appairage {protocol.name} reussi!")
             credentials = pairing.service.credentials
             save_credentials(
-                device_config.identifier, Protocol.Companion.name, credentials
+                device_config.identifier, protocol.name, credentials
             )
             return credentials
         else:
-            logger.error("\nEchec de l'appairage.")
+            logger.error(f"Echec de l'appairage {protocol.name}.")
             return None
     finally:
         await pairing.close()
+
+
+async def pair_device(device_config: pyatv.interface.BaseConfig) -> bool:
+    """Lance l'appairage avec une Apple TV (tous les protocoles)."""
+    logger.info(f"Appairage avec {device_config.name}...")
+
+    # Protocoles a appairer (ordre de priorite)
+    protocols_to_pair = [Protocol.Companion, Protocol.AirPlay]
+
+    available_protocols = {s.protocol for s in device_config.services}
+    logger.info(f"Protocoles disponibles: {', '.join(p.name for p in available_protocols)}")
+
+    success_count = 0
+
+    for protocol in protocols_to_pair:
+        if protocol not in available_protocols:
+            logger.info(f"  {protocol.name}: non disponible")
+            continue
+
+        # Verifier si deja appaire
+        creds = load_credentials()
+        if device_config.identifier in creds and protocol.name in creds[device_config.identifier]:
+            logger.info(f"  {protocol.name}: deja appaire")
+            success_count += 1
+            continue
+
+        try:
+            result = await pair_protocol(device_config, protocol)
+            if result:
+                success_count += 1
+        except Exception as e:
+            logger.error(f"  Erreur {protocol.name}: {e}")
+
+    if success_count > 0:
+        logger.info(f"\n[OK] {success_count} protocole(s) appaire(s)!")
+        return True
+    else:
+        logger.error("\nAucun protocole n'a pu etre appaire.")
+        return False
 
 
 # =============================================================================
@@ -408,17 +441,29 @@ async def turn_off(atv: AppleTV) -> None:
 # =============================================================================
 
 
-@require_feature(FeatureName.Play)
 async def cmd_play(atv: AppleTV) -> None:
     """Lance la lecture."""
-    await atv.remote_control.play()
+    # Play individuel souvent non disponible, on essaie quand meme
+    if atv.features.in_state(FeatureState.Available, FeatureName.Play):
+        await atv.remote_control.play()
+    elif atv.features.in_state(FeatureState.Available, FeatureName.PlayPause):
+        await atv.remote_control.play_pause()
+        logger.info("(via PlayPause)")
+    else:
+        raise FeatureNotAvailableError("Play non disponible")
     logger.info("Lecture lancee!")
 
 
-@require_feature(FeatureName.Pause)
 async def cmd_pause(atv: AppleTV) -> None:
     """Met en pause."""
-    await atv.remote_control.pause()
+    # Pause individuel souvent non disponible, on essaie quand meme
+    if atv.features.in_state(FeatureState.Available, FeatureName.Pause):
+        await atv.remote_control.pause()
+    elif atv.features.in_state(FeatureState.Available, FeatureName.PlayPause):
+        await atv.remote_control.play_pause()
+        logger.info("(via PlayPause)")
+    else:
+        raise FeatureNotAvailableError("Pause non disponible")
     logger.info("Pause!")
 
 
@@ -436,18 +481,24 @@ async def cmd_stop(atv: AppleTV) -> None:
     logger.info("Arret!")
 
 
-@require_feature(FeatureName.Next)
 async def cmd_next(atv: AppleTV) -> None:
     """Piste suivante."""
-    await atv.remote_control.next()
-    logger.info("Suivant!")
+    # Next pas toujours disponible, on essaie quand meme
+    try:
+        await atv.remote_control.next()
+        logger.info("Suivant!")
+    except Exception as e:
+        raise FeatureNotAvailableError(f"Next non disponible: {e}")
 
 
-@require_feature(FeatureName.Previous)
 async def cmd_previous(atv: AppleTV) -> None:
     """Piste precedente."""
-    await atv.remote_control.previous()
-    logger.info("Precedent!")
+    # Previous pas toujours disponible, on essaie quand meme
+    try:
+        await atv.remote_control.previous()
+        logger.info("Precedent!")
+    except Exception as e:
+        raise FeatureNotAvailableError(f"Previous non disponible: {e}")
 
 
 # =============================================================================
@@ -989,77 +1040,80 @@ async def run_scheduler() -> None:
 
 def create_parser() -> argparse.ArgumentParser:
     """Cree le parser d'arguments."""
-    parser = argparse.ArgumentParser(
-        description="Controle Apple TV via pyatv",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-
-    parser.add_argument(
+    # Parser parent avec les arguments communs
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    parent_parser.add_argument(
         "-d",
         "--device",
         help="Nom ou index de l'appareil",
     )
-    parser.add_argument(
+    parent_parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
         help="Mode verbose",
     )
 
+    parser = argparse.ArgumentParser(
+        description="Controle Apple TV via pyatv",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        parents=[parent_parser],
+    )
+
     subparsers = parser.add_subparsers(dest="command", help="Commandes disponibles")
 
     # Appareils
-    subparsers.add_parser("scan", help="Scanner les appareils")
-    subparsers.add_parser("pair", help="Appairer avec l'Apple TV")
-    subparsers.add_parser("status", help="Etat d'alimentation")
+    subparsers.add_parser("scan", help="Scanner les appareils", parents=[parent_parser])
+    subparsers.add_parser("pair", help="Appairer avec l'Apple TV", parents=[parent_parser])
+    subparsers.add_parser("status", help="Etat d'alimentation", parents=[parent_parser])
 
     # Alimentation
-    subparsers.add_parser("on", help="Allumer")
-    subparsers.add_parser("off", help="Eteindre")
+    subparsers.add_parser("on", help="Allumer", parents=[parent_parser])
+    subparsers.add_parser("off", help="Eteindre", parents=[parent_parser])
 
     # Lecture
-    subparsers.add_parser("play", help="Lecture")
-    subparsers.add_parser("pause", help="Pause")
-    subparsers.add_parser("play_pause", help="Toggle lecture/pause")
-    subparsers.add_parser("stop", help="Stop")
-    subparsers.add_parser("next", help="Suivant")
-    subparsers.add_parser("previous", help="Precedent")
+    subparsers.add_parser("play", help="Lecture", parents=[parent_parser])
+    subparsers.add_parser("pause", help="Pause", parents=[parent_parser])
+    subparsers.add_parser("play_pause", help="Toggle lecture/pause", parents=[parent_parser])
+    subparsers.add_parser("stop", help="Stop", parents=[parent_parser])
+    subparsers.add_parser("next", help="Suivant", parents=[parent_parser])
+    subparsers.add_parser("previous", help="Precedent", parents=[parent_parser])
 
     # Telecommande
-    subparsers.add_parser("up", help="Haut")
-    subparsers.add_parser("down", help="Bas")
-    subparsers.add_parser("left", help="Gauche")
-    subparsers.add_parser("right", help="Droite")
-    subparsers.add_parser("select", help="Selection")
-    subparsers.add_parser("menu", help="Menu")
-    subparsers.add_parser("home", help="Home")
+    subparsers.add_parser("up", help="Haut", parents=[parent_parser])
+    subparsers.add_parser("down", help="Bas", parents=[parent_parser])
+    subparsers.add_parser("left", help="Gauche", parents=[parent_parser])
+    subparsers.add_parser("right", help="Droite", parents=[parent_parser])
+    subparsers.add_parser("select", help="Selection", parents=[parent_parser])
+    subparsers.add_parser("menu", help="Menu", parents=[parent_parser])
+    subparsers.add_parser("home", help="Home", parents=[parent_parser])
 
     # Volume
-    subparsers.add_parser("volume_up", help="Volume +")
-    subparsers.add_parser("volume_down", help="Volume -")
-    vol_parser = subparsers.add_parser("volume", help="Volume (afficher ou regler)")
+    subparsers.add_parser("volume_up", help="Volume +", parents=[parent_parser])
+    subparsers.add_parser("volume_down", help="Volume -", parents=[parent_parser])
+    vol_parser = subparsers.add_parser("volume", help="Volume (afficher ou regler)", parents=[parent_parser])
     vol_parser.add_argument("level", type=int, nargs="?", help="Niveau 0-100")
 
     # Applications
-    subparsers.add_parser("apps", help="Lister les apps")
-    subparsers.add_parser("apps_config", help="Afficher config apps")
-    subparsers.add_parser("apps_sync", help="Synchroniser apps.json")
-    launch_parser = subparsers.add_parser("launch", help="Lancer une app")
+    subparsers.add_parser("apps", help="Lister les apps", parents=[parent_parser])
+    subparsers.add_parser("apps_config", help="Afficher config apps", parents=[parent_parser])
+    subparsers.add_parser("apps_sync", help="Synchroniser apps.json", parents=[parent_parser])
+    launch_parser = subparsers.add_parser("launch", help="Lancer une app", parents=[parent_parser])
     launch_parser.add_argument("app", help="Nom ou bundle ID")
 
     # Scenarios
-    subparsers.add_parser("scenarios", help="Lister les scenarios")
-    scenario_parser = subparsers.add_parser("scenario", help="Executer un scenario")
+    subparsers.add_parser("scenarios", help="Lister les scenarios", parents=[parent_parser])
+    scenario_parser = subparsers.add_parser("scenario", help="Executer un scenario", parents=[parent_parser])
     scenario_parser.add_argument("name", help="Nom du scenario")
 
     # Planification
-    subparsers.add_parser("schedules", help="Lister les planifications")
-    subparsers.add_parser("schedule-add", help="Ajouter une planification")
-    schedule_rm = subparsers.add_parser("schedule-remove", help="Supprimer une planification")
+    subparsers.add_parser("schedules", help="Lister les planifications", parents=[parent_parser])
+    subparsers.add_parser("schedule-add", help="Ajouter une planification", parents=[parent_parser])
+    schedule_rm = subparsers.add_parser("schedule-remove", help="Supprimer une planification", parents=[parent_parser])
     schedule_rm.add_argument("index", type=int, help="Index de la planification")
 
     # Scheduler daemon
-    scheduler_parser = subparsers.add_parser("scheduler", help="Lancer le daemon")
+    scheduler_parser = subparsers.add_parser("scheduler", help="Lancer le daemon", parents=[parent_parser])
     scheduler_parser.add_argument(
         "--daemon", action="store_true", help="Lancer en arriere-plan"
     )
