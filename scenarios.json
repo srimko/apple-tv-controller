@@ -1,0 +1,49 @@
+{
+  "netflix_profil1": {
+    "description": "Lancer Netflix et sélectionner le premier profil",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 3},
+      {"action": "select"}
+    ]
+  },
+  "netflix_profil1_last_view": {
+    "description": "Lancer Netflix et sélectionner le premier profil avec la dernier série vue",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 5},
+      {"action": "select"},
+      {"action": "wait", "seconds": 5},
+      {"action": "down"},
+      {"action": "wait", "seconds": 2},
+      {"action": "select"},
+      {"action": "wait", "seconds": 2},
+      {"action": "select"}
+    ]
+  },
+  "canal_direct": {
+    "description": "Lancer Canal+ et aller sur le direct",
+    "steps": [
+      {"action": "launch", "app": "canal"},
+      {"action": "wait", "seconds": 2},
+      {"action": "down", "repeat": 2},
+      {"action": "select"}
+    ]
+  },
+  "youtube_home": {
+    "description": "Lancer YouTube et aller à l'accueil",
+    "steps": [
+      {"action": "launch", "app": "youtube"},
+      {"action": "wait", "seconds": 2},
+      {"action": "home"}
+    ]
+  },
+  "disney_profil1": {
+    "description": "Lancer Disney+ et sélectionner le premier profil",
+    "steps": [
+      {"action": "launch", "app": "disney"},
+      {"action": "wait", "seconds": 3},
+      {"action": "select"}
+    ]
+  }
+}
