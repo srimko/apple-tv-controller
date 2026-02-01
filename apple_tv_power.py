@@ -22,12 +22,12 @@ import logging
 import subprocess
 import sys
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, Union
 
 import pyatv
 from pyatv.const import FeatureName, FeatureState, Protocol
@@ -49,6 +49,8 @@ SCHEDULE_FILE = SCRIPT_DIR / "schedule.json"
 # Timeouts (secondes)
 SCAN_TIMEOUT = 5
 OPERATION_TIMEOUT = 10
+REPEAT_DELAY = 0.3  # Delai entre repetitions d'actions
+SCHEDULER_INTERVAL = 60  # Intervalle de verification du scheduler
 
 # Configuration par defaut des applications
 DEFAULT_APPS_CONFIG: dict[str, str] = {
@@ -103,25 +105,13 @@ logger = logging.getLogger(__name__)
 class AppleTVError(Exception):
     """Exception de base pour les erreurs Apple TV."""
 
-    pass
-
 
 class DeviceNotFoundError(AppleTVError):
     """Appareil non trouve."""
 
-    pass
-
 
 class FeatureNotAvailableError(AppleTVError):
     """Fonctionnalite non disponible."""
-
-    pass
-
-
-class PairingRequiredError(AppleTVError):
-    """Appairage requis."""
-
-    pass
 
 
 # =============================================================================
@@ -242,7 +232,7 @@ async def connect_atv(device_config: pyatv.interface.BaseConfig):
     else:
         logger.warning("Aucun credential trouve. Utilisez 'pair' d'abord.")
 
-    atv = await pyatv.connect(device_config, asyncio.get_event_loop())
+    atv = await pyatv.connect(device_config, asyncio.get_running_loop())
     logger.info("Connecte!")
 
     try:
@@ -277,7 +267,7 @@ def require_feature(feature: FeatureName):
 async def scan_devices(timeout: int = SCAN_TIMEOUT) -> list[pyatv.interface.BaseConfig]:
     """Scanne le reseau pour trouver les Apple TV."""
     logger.info("Recherche des Apple TV...")
-    devices = await pyatv.scan(asyncio.get_event_loop(), timeout=timeout)
+    devices = await pyatv.scan(asyncio.get_running_loop(), timeout=timeout)
     return devices
 
 
@@ -341,7 +331,7 @@ async def pair_device(device_config: pyatv.interface.BaseConfig) -> Optional[str
     logger.info("Un code PIN va s'afficher sur votre Apple TV.\n")
 
     pairing = await pyatv.pair(
-        device_config, Protocol.Companion, asyncio.get_event_loop()
+        device_config, Protocol.Companion, asyncio.get_running_loop()
     )
 
     try:
@@ -534,7 +524,7 @@ async def get_volume(atv: AppleTV) -> Optional[float]:
 
 
 @require_feature(FeatureName.AppList)
-async def list_apps(atv: AppleTV) -> list:
+async def list_apps(atv: AppleTV) -> list[Any]:
     """Liste les applications installees."""
     apps = await atv.apps.app_list()
     print("\nApplications installees:\n")
@@ -619,7 +609,7 @@ def show_scenarios() -> None:
     print(f"Fichier: {SCENARIOS_FILE}")
 
 
-async def execute_step(atv: AppleTV, step: dict, num: int) -> bool:
+async def execute_step(atv: AppleTV, step: dict[str, Any], num: int) -> bool:
     """Execute une etape de scenario."""
     action = step.get("action")
     repeat = step.get("repeat", 1)
@@ -686,7 +676,7 @@ async def execute_step(atv: AppleTV, step: dict, num: int) -> bool:
             return False
 
         if repeat > 1 and i < repeat - 1:
-            await asyncio.sleep(0.3)
+            await asyncio.sleep(REPEAT_DELAY)
 
     return True
 
@@ -737,6 +727,17 @@ class ScheduleEntry:
     minute: int
     weekdays: Optional[list[int]] = None
     enabled: bool = True
+
+    def __post_init__(self) -> None:
+        """Valide les champs apres initialisation."""
+        if not 0 <= self.hour <= 23:
+            raise ValueError(f"hour doit etre entre 0-23, recu: {self.hour}")
+        if not 0 <= self.minute <= 59:
+            raise ValueError(f"minute doit etre entre 0-59, recu: {self.minute}")
+        if self.weekdays is not None:
+            invalid = [d for d in self.weekdays if not 0 <= d <= 6]
+            if invalid:
+                raise ValueError(f"weekdays doit etre entre 0-6, invalides: {invalid}")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ScheduleEntry:
@@ -976,9 +977,9 @@ async def run_scheduler() -> None:
                     )
                     await execute_scheduled_entry(entry)
 
-        # Attendre la prochaine minute
-        now = datetime.now()
-        await asyncio.sleep(60 - now.second)
+        # Attendre la prochaine minute (calcul atomique pour eviter race condition)
+        sleep_seconds = SCHEDULER_INTERVAL - datetime.now().second
+        await asyncio.sleep(max(1, sleep_seconds))
 
 
 # =============================================================================
@@ -1117,11 +1118,13 @@ async def main() -> int:
             # Lancer en arriere-plan avec nohup
             script_path = Path(__file__).absolute()
             log_file = SCRIPT_DIR / "scheduler.log"
-            logger.info(f"Lancement du scheduler en arriere-plan...")
+            logger.info("Lancement du scheduler en arriere-plan...")
             logger.info(f"Logs: {log_file}")
+            # Note: Le file handle reste ouvert intentionnellement pour le subprocess
+            log_handle = open(log_file, "a")
             subprocess.Popen(
                 ["nohup", sys.executable, str(script_path), "scheduler"],
-                stdout=open(log_file, "a"),
+                stdout=log_handle,
                 stderr=subprocess.STDOUT,
                 start_new_session=True,
             )
