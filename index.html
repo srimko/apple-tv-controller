@@ -228,8 +228,8 @@
 <p>Controlez votre Apple TV en 4 commandes. Remplacez "Salon" par le nom de votre Apple TV (visible dans Reglages > General > Nom).</p>
 
 <div class="quickstart-block">
-<pre><code class="language-bash"># Installer la bibliotheque pyatv
-pip install pyatv
+<pre><code class="language-bash"># Installer les dependances
+pip install pyatv aiohttp
 
 # Trouver les Apple TV sur votre reseau
 python3 apple_tv_power.py scan
@@ -246,7 +246,7 @@ python3 apple_tv_power.py select -d "Salon"</code></pre>
 
 <h2 id="installation">Installation</h2>
 
-<div class="cmd"><code>pip install pyatv</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>pip install pyatv aiohttp</code><button class="copy-btn">Copier</button></div>
 
 <h2 id="configuration">Configuration initiale</h2>
 

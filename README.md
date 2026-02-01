@@ -7,11 +7,12 @@ Script Python pour controler une Apple TV via le reseau local en utilisant la bi
 Controlez votre Apple TV en 4 commandes. Remplacez "Salon" par le nom de votre Apple TV (visible dans Reglages > General > Nom).
 
 ```bash
-# Installer la bibliotheque pyatv
-pip install pyatv
+# Installer les dependances
+pip install pyatv aiohttp
 
 # Trouver les Apple TV sur votre reseau
 python3 apple_tv_power.py scan
+# ou: python3 -m apple_tv scan
 
 # Appairer (un code PIN s'affiche sur la TV)
 python3 apple_tv_power.py pair -d "Salon"
@@ -25,7 +26,7 @@ python3 apple_tv_power.py select -d "Salon"
 ## Installation
 
 ```bash
-pip install pyatv
+pip install pyatv aiohttp
 ```
 
 ## Configuration initiale
@@ -318,12 +319,20 @@ python3 apple_tv_power.py on
 
 | Fichier | Description |
 |---------|-------------|
-| `apple_tv_power.py` | Script principal |
+| `apple_tv_power.py` | Point d'entree (wrapper) |
+| `apple_tv/` | Package Python |
+| `apple_tv/cli.py` | Interface ligne de commande |
+| `apple_tv/config.py` | Configuration et constantes |
+| `apple_tv/connection.py` | Connexion et appairage |
+| `apple_tv/controls.py` | Controles (power, lecture, volume) |
+| `apple_tv/apps.py` | Gestion des applications |
+| `apple_tv/scenarios.py` | Execution des scenarios |
+| `apple_tv/scheduler.py` | Planification |
+| `apple_tv/server.py` | Serveur HTTP |
 | `credentials.json` | Credentials d'appairage |
 | `apps.json` | Alias des applications |
 | `scenarios.json` | Configuration des scenarios |
 | `schedule.json` | Planifications horaires |
-| `scheduler.log` | Logs du daemon (si --daemon) |
 
 ---
 
