@@ -91,6 +91,23 @@
         th { background: #e8e8e8; }
         tr:nth-child(even) { background: #fafafa; }
         hr { border: none; border-top: 1px solid #ddd; margin: 30px 0; }
+        /* Table copy button */
+        .copy-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            opacity: 0.4;
+            transition: opacity 0.2s;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .copy-icon:hover { opacity: 1; }
+        .copy-icon svg { display: block; }
+        .copy-icon.copied svg { stroke: #28a745; }
+        .cmd-table td:last-child { position: relative; padding-right: 35px; }
         /* Command lines with copy button */
         .cmd {
             display: flex;
@@ -201,11 +218,11 @@
 
 <h3 id="alimentation">Alimentation</h3>
 
-<table>
+<table class="cmd-table">
     <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>on</code></td><td>Allumer l'Apple TV</td></tr>
-    <tr><td><code>off</code></td><td>Eteindre l'Apple TV (mise en veille)</td></tr>
-    <tr><td><code>status</code></td><td>Afficher l'etat d'alimentation</td></tr>
+    <tr><td><code>on</code></td><td>Allumer l'Apple TV <button class="copy-icon" data-cmd="on"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>off</code></td><td>Eteindre l'Apple TV (mise en veille) <button class="copy-icon" data-cmd="off"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>status</code></td><td>Afficher l'etat d'alimentation <button class="copy-icon" data-cmd="status"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
 </table>
 
 <div class="cmd"><code>python3 apple_tv_power.py on -d "Salon"</code><button class="copy-btn">Copier</button></div>
@@ -214,14 +231,14 @@
 
 <h3 id="lecture">Lecture</h3>
 
-<table>
+<table class="cmd-table">
     <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>play</code></td><td>Lancer la lecture</td></tr>
-    <tr><td><code>pause</code></td><td>Mettre en pause</td></tr>
-    <tr><td><code>play_pause</code></td><td>Toggle lecture/pause</td></tr>
-    <tr><td><code>stop</code></td><td>Arreter la lecture</td></tr>
-    <tr><td><code>next</code></td><td>Piste/chapitre suivant</td></tr>
-    <tr><td><code>previous</code></td><td>Piste/chapitre precedent</td></tr>
+    <tr><td><code>play</code></td><td>Lancer la lecture <button class="copy-icon" data-cmd="play"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>pause</code></td><td>Mettre en pause <button class="copy-icon" data-cmd="pause"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>play_pause</code></td><td>Toggle lecture/pause <button class="copy-icon" data-cmd="play_pause"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>stop</code></td><td>Arreter la lecture <button class="copy-icon" data-cmd="stop"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>next</code></td><td>Piste/chapitre suivant <button class="copy-icon" data-cmd="next"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>previous</code></td><td>Piste/chapitre precedent <button class="copy-icon" data-cmd="previous"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
 </table>
 
 <div class="cmd"><code>python3 apple_tv_power.py play -d "Salon"</code><button class="copy-btn">Copier</button></div>
@@ -229,15 +246,15 @@
 
 <h3 id="telecommande">Telecommande</h3>
 
-<table>
+<table class="cmd-table">
     <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>up</code></td><td>Fleche haut</td></tr>
-    <tr><td><code>down</code></td><td>Fleche bas</td></tr>
-    <tr><td><code>left</code></td><td>Fleche gauche</td></tr>
-    <tr><td><code>right</code></td><td>Fleche droite</td></tr>
-    <tr><td><code>select</code></td><td>Bouton OK/Selection</td></tr>
-    <tr><td><code>menu</code></td><td>Bouton Menu (retour)</td></tr>
-    <tr><td><code>home</code></td><td>Bouton Home (accueil)</td></tr>
+    <tr><td><code>up</code></td><td>Fleche haut <button class="copy-icon" data-cmd="up"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>down</code></td><td>Fleche bas <button class="copy-icon" data-cmd="down"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>left</code></td><td>Fleche gauche <button class="copy-icon" data-cmd="left"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>right</code></td><td>Fleche droite <button class="copy-icon" data-cmd="right"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>select</code></td><td>Bouton OK/Selection <button class="copy-icon" data-cmd="select"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>menu</code></td><td>Bouton Menu (retour) <button class="copy-icon" data-cmd="menu"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>home</code></td><td>Bouton Home (accueil) <button class="copy-icon" data-cmd="home"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
 </table>
 
 <div class="cmd"><code>python3 apple_tv_power.py up -d "Salon"</code><button class="copy-btn">Copier</button></div>
@@ -245,11 +262,11 @@
 
 <h3 id="volume">Volume</h3>
 
-<table>
+<table class="cmd-table">
     <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>volume_up</code></td><td>Augmenter le volume</td></tr>
-    <tr><td><code>volume_down</code></td><td>Baisser le volume</td></tr>
-    <tr><td><code>volume</code></td><td>Afficher le volume actuel</td></tr>
+    <tr><td><code>volume_up</code></td><td>Augmenter le volume <button class="copy-icon" data-cmd="volume_up"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>volume_down</code></td><td>Baisser le volume <button class="copy-icon" data-cmd="volume_down"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>volume</code></td><td>Afficher le volume actuel <button class="copy-icon" data-cmd="volume"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
     <tr><td><code>volume &lt;0-100&gt;</code></td><td>Regler le volume</td></tr>
 </table>
 
@@ -258,11 +275,11 @@
 
 <h3 id="applications">Applications</h3>
 
-<table>
+<table class="cmd-table">
     <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>apps</code></td><td>Lister les applications installees</td></tr>
-    <tr><td><code>apps_config</code></td><td>Afficher la configuration des alias</td></tr>
-    <tr><td><code>apps_sync</code></td><td>Synchroniser apps.json avec l'Apple TV</td></tr>
+    <tr><td><code>apps</code></td><td>Lister les applications installees <button class="copy-icon" data-cmd="apps"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>apps_config</code></td><td>Afficher la configuration des alias <button class="copy-icon" data-cmd="apps_config"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
+    <tr><td><code>apps_sync</code></td><td>Synchroniser apps.json avec l'Apple TV <button class="copy-icon" data-cmd="apps_sync"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
     <tr><td><code>launch &lt;app&gt;</code></td><td>Lancer une application</td></tr>
 </table>
 
@@ -282,9 +299,9 @@
 
 <p>Les scenarios permettent d'automatiser des sequences d'actions.</p>
 
-<table>
+<table class="cmd-table">
     <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>scenarios</code></td><td>Lister les scenarios disponibles</td></tr>
+    <tr><td><code>scenarios</code></td><td>Lister les scenarios disponibles <button class="copy-icon" data-cmd="scenarios"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
     <tr><td><code>scenario &lt;nom&gt;</code></td><td>Executer un scenario</td></tr>
 </table>
 
@@ -480,6 +497,20 @@ document.querySelectorAll('.cmd .copy-btn').forEach(function(btn) {
                 btn.textContent = 'Copier';
                 btn.classList.remove('copied');
             }, 2000);
+        });
+    });
+});
+
+// Handle table copy icon buttons
+document.querySelectorAll('.copy-icon').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var cmd = btn.getAttribute('data-cmd');
+        var fullCmd = 'python3 apple_tv_power.py ' + cmd + ' -d "Salon"';
+        navigator.clipboard.writeText(fullCmd).then(function() {
+            btn.classList.add('copied');
+            setTimeout(function() {
+                btn.classList.remove('copied');
+            }, 1000);
         });
     });
 });
