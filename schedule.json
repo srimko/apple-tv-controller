@@ -1,0 +1,18 @@
+{
+  "schedules": [
+    {
+      "scenario": "netflix_profil1",
+      "device": "Salon",
+      "time": {"hour": 20, "minute": 0},
+      "weekdays": [1, 2, 3, 4, 5],
+      "enabled": true
+    },
+    {
+      "scenario": "canal_direct",
+      "device": "Salon",
+      "time": {"hour": 20, "minute": 30},
+      "weekdays": [0, 6],
+      "enabled": false
+    }
+  ]
+}
