@@ -33,8 +33,36 @@
   "youtube_home": {
     "description": "Lancer YouTube et aller à l'accueil",
     "steps": [
+      {"action": "scenario", "name": "close_apps"},                      
+      {"action": "wait", "seconds": 3},
       {"action": "launch", "app": "youtube"},
+      {"action": "wait", "seconds": 5},
+      {"action": "left"},
+      {"action": "up"},
+      {"action": "select"},
       {"action": "wait", "seconds": 2},
+      {"action": "right", "repeat": 11},
+      {"action": "select"},
+      {"action": "down"},
+      {"action": "left", "repeat": 3},
+      {"action": "select"},
+      {"action": "up"},
+      {"action": "right", "repeat": 2},
+      {"action": "select"},
+      {"action": "down"},
+      {"action": "left", "repeat": 8},
+      {"action": "select"},
+      {"action": "up"},
+      {"action": "left", "repeat": 3},
+      {"action": "select"},
+      {"action": "right", "repeat": 16},
+      {"action": "select"},
+      {"action": "left", "repeat": 3},
+      {"action": "select"},
+      {"action": "wait", "seconds": 2},
+      {"action": "down", "repeat": 3},
+      {"action": "select"},
+      {"action": "down", "repeat": 2},
       {"action": "select"}
     ]
   },
@@ -46,6 +74,15 @@
       {"action": "select"}
     ]
   },
+  "close_apps": {                                                        
+      "description": "Ouvrir App Switcher et fermer 2 apps",               
+      "steps": [                                                           
+        {"action": "home_double"},                                         
+        {"action": "wait", "seconds": 1},                                  
+        {"action": "swipe_up"},                                            
+        {"action": "swipe_up"}                                             
+      ]                                                                    
+    },
   "forme": {
     "description": "Lancer l'application Forme (Fitness)",
     "steps": [

@@ -20,6 +20,7 @@ CREDENTIALS_FILE = ROOT_DIR / "credentials.json"
 APPS_CONFIG_FILE = ROOT_DIR / "apps.json"
 SCENARIOS_FILE = ROOT_DIR / "scenarios.json"
 SCHEDULE_FILE = ROOT_DIR / "schedule.json"
+CONFIG_FILE = ROOT_DIR / "config.json"
 
 # Fichiers sensibles (permissions 600)
 SENSITIVE_FILES = {CREDENTIALS_FILE}
@@ -85,6 +86,29 @@ def setup_logging(level: int = logging.INFO) -> None:
     handler.setFormatter(logging.Formatter("%(message)s"))
     logger.addHandler(handler)
     logger.setLevel(level)
+
+
+def get_config() -> dict[str, Any]:
+    """Charge la configuration utilisateur."""
+    return load_json(CONFIG_FILE, default={})
+
+
+def save_config(config: dict[str, Any]) -> bool:
+    """Sauvegarde la configuration utilisateur."""
+    return save_json(CONFIG_FILE, config)
+
+
+def get_default_device() -> str | None:
+    """Retourne le device par defaut ou None."""
+    config = get_config()
+    return config.get("default_device")
+
+
+def set_default_device(device_name: str) -> bool:
+    """Definit le device par defaut."""
+    config = get_config()
+    config["default_device"] = device_name
+    return save_config(config)
 
 
 def load_json(filepath: Path, default: Any = None) -> Any:

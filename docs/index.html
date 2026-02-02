@@ -222,7 +222,7 @@
 <nav class="sidebar">
     <div class="title">
         Apple TV Controller
-        <span>Documentation v1.0</span>
+        <span>Documentation v2.0</span>
     </div>
 
     <h3>Demarrage</h3>
@@ -234,7 +234,7 @@
     <a href="#ios-shortcuts">Integration iOS</a>
 
     <h3>Reference</h3>
-    <a href="#commandes">Commandes</a>
+    <a href="#commandes">Commandes CLI</a>
     <a href="#actions">Actions de scenario</a>
     <a href="#fichiers">Fichiers config</a>
 
@@ -255,7 +255,8 @@
         <li><a href="#tutoriel">Tutoriel : Votre premier scenario</a></li>
         <li><a href="#scenarios-exemples">Scenarios prets a l'emploi</a></li>
         <li><a href="#ios-shortcuts">Integration Raccourcis iOS</a></li>
-        <li><a href="#commandes">Reference des commandes</a></li>
+        <li><a href="#commandes">Reference des commandes CLI</a></li>
+        <li><a href="#fichiers">Fichiers de configuration</a></li>
         <li><a href="#depannage">Depannage</a></li>
     </ul>
 </div>
@@ -276,35 +277,28 @@
 
 <div class="cmd"><code>git clone https://github.com/username/apple-tv-controller.git</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>cd apple-tv-controller</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>pip install pyatv aiohttp</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>pip install -e .</code><button class="copy-btn">Copier</button></div>
 
-<h3><span class="step-number">2</span> Decouvrir votre Apple TV</h3>
+<h3><span class="step-number">2</span> Configuration assistee</h3>
 
-<div class="cmd"><code>python3 apple_tv_power.py scan</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv setup</code><button class="copy-btn">Copier</button></div>
 
-<p>Resultat attendu :</p>
-<pre><code>[0] Salon
-    Adresse: 192.168.1.91
-    Protocoles: AirPlay, Companion, RAOP</code></pre>
+<p>L'assistant interactif va :</p>
+<ol>
+    <li>Scanner les Apple TV sur le reseau</li>
+    <li>Vous faire choisir votre Apple TV</li>
+    <li>Lancer l'appairage (entrez le code PIN affiche sur la TV)</li>
+    <li>Sauvegarder le device par defaut</li>
+</ol>
 
 <blockquote>
     <strong>Pas de resultat ?</strong> Voir <a href="#aucune-apple-tv">Depannage > Aucune Apple TV trouvee</a>
 </blockquote>
 
-<h3><span class="step-number">3</span> Appairer</h3>
+<h3><span class="step-number">3</span> Tester</h3>
 
-<div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<ol>
-    <li>Un code PIN a 4 chiffres s'affiche sur votre TV</li>
-    <li>Entrez-le dans le terminal</li>
-    <li>Les credentials sont sauvegardes automatiquement</li>
-</ol>
-
-<h3><span class="step-number">4</span> Tester</h3>
-
-<div class="cmd"><code>python3 apple_tv_power.py select -d "Salon"</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py up -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv test</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv status</code><button class="copy-btn">Copier</button></div>
 
 <blockquote class="success">
     <strong>Vous etes pret !</strong> Continuez avec le tutoriel ci-dessous.
@@ -316,11 +310,16 @@
 
 <p>Un scenario est une sequence d'actions automatisees. Exemple : lancer Netflix et selectionner un profil.</p>
 
-<h3><span class="step-number">1</span> Voir les scenarios existants</h3>
+<h3>Option 1 : Enregistrer interactivement (recommande)</h3>
 
-<div class="cmd"><code>python3 apple_tv_power.py scenarios</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv record netflix_profil1</code><button class="copy-btn">Copier</button></div>
 
-<h3><span class="step-number">2</span> Ajouter votre scenario</h3>
+<p>L'assistant interactif vous permet de choisir les actions, ajouter des pauses, et tester en temps reel.</p>
+
+<h3>Option 2 : Editer manuellement</h3>
+
+<div class="cmd"><code>atv list</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv reference</code><button class="copy-btn">Copier</button></div>
 
 <p>Editez <code>scenarios.json</code> :</p>
 
@@ -335,11 +334,15 @@
   }
 }</code></pre>
 
-<h3><span class="step-number">3</span> Executer</h3>
+<h3>Executer un scenario</h3>
 
-<div class="cmd"><code>python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv run netflix_profil1</code><button class="copy-btn">Copier</button></div>
 
-<h3><span class="step-number">4</span> Ajuster le timing</h3>
+<blockquote class="info">
+    Si vous avez configure un device par defaut avec <code>atv setup</code>, vous n'avez pas besoin de specifier <code>-d</code>.
+</blockquote>
+
+<h3>Ajuster le timing</h3>
 
 <p>Si ca va trop vite, augmentez le <code>wait</code> ou ajoutez un <code>delay</code> :</p>
 
@@ -450,7 +453,7 @@
 
 <p>Sur votre Mac (laissez le terminal ouvert) :</p>
 
-<div class="cmd"><code>python3 apple_tv_power.py server</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv server</code><button class="copy-btn">Copier</button></div>
 
 <h3><span class="step-number">2</span> Trouver l'IP de votre Mac</h3>
 
@@ -502,73 +505,50 @@
 
 <h2 id="commandes">Reference des commandes</h2>
 
-<h3>Telecommande</h3>
+<p>Utilisez <code>atv --help</code> pour voir toutes les commandes disponibles.</p>
+
+<h3>Commandes CLI</h3>
 
 <table>
     <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>up</code>, <code>down</code>, <code>left</code>, <code>right</code></td><td>Navigation</td></tr>
-    <tr><td><code>select</code></td><td>Bouton OK</td></tr>
-    <tr><td><code>menu</code></td><td>Retour</td></tr>
-    <tr><td><code>home</code></td><td>Ecran d'accueil</td></tr>
-    <tr><td><code>home_double</code></td><td>App Switcher (double home)</td></tr>
+    <tr><td><code>atv setup</code></td><td>Assistant de configuration interactif</td></tr>
+    <tr><td><code>atv config</code></td><td>Voir/modifier la configuration</td></tr>
+    <tr><td><code>atv scan</code></td><td>Scanner les Apple TV sur le reseau</td></tr>
+    <tr><td><code>atv test</code></td><td>Tester la connexion</td></tr>
+    <tr><td><code>atv status</code></td><td>Afficher l'etat de l'Apple TV</td></tr>
+    <tr><td><code>atv wake</code></td><td>Allumer l'Apple TV</td></tr>
+    <tr><td><code>atv sleep</code></td><td>Eteindre (veille)</td></tr>
+    <tr><td><code>atv launch &lt;app&gt;</code></td><td>Lancer une application</td></tr>
+    <tr><td><code>atv apps</code></td><td>Lister les applications installees</td></tr>
+    <tr><td><code>atv run &lt;scenario&gt;</code></td><td>Executer un scenario</td></tr>
+    <tr><td><code>atv list</code></td><td>Lister les scenarios</td></tr>
+    <tr><td><code>atv record &lt;name&gt;</code></td><td>Enregistrer un scenario interactivement</td></tr>
+    <tr><td><code>atv reference</code></td><td>Afficher la reference des actions</td></tr>
+    <tr><td><code>atv server</code></td><td>Lancer le serveur HTTP</td></tr>
 </table>
 
-<h3>Touch (Swipe)</h3>
+<h3>Options globales</h3>
 
 <table>
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>swipe_up</code>, <code>swipe_down</code></td><td>Glissement vertical</td></tr>
-    <tr><td><code>swipe_left</code>, <code>swipe_right</code></td><td>Glissement horizontal</td></tr>
+    <tr><th>Option</th><th>Description</th></tr>
+    <tr><td><code>-d</code>, <code>--device</code></td><td>Nom de l'Apple TV</td></tr>
+    <tr><td><code>--help</code></td><td>Afficher l'aide</td></tr>
 </table>
 
 <blockquote class="info">
-    Les swipes sont disponibles uniquement dans les scenarios.
+    Definissez la variable d'environnement <code>ATV_DEVICE</code> ou utilisez <code>atv config</code> pour eviter de specifier <code>-d</code> a chaque fois.
 </blockquote>
 
-<h3>Lecture</h3>
-
-<table>
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>play</code>, <code>pause</code>, <code>play_pause</code></td><td>Controle lecture</td></tr>
-    <tr><td><code>stop</code></td><td>Arreter</td></tr>
-    <tr><td><code>next</code>, <code>previous</code></td><td>Piste suivante/precedente</td></tr>
-</table>
-
-<h3>Alimentation</h3>
-
-<table>
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>on</code></td><td>Allumer</td></tr>
-    <tr><td><code>off</code></td><td>Eteindre (veille)</td></tr>
-    <tr><td><code>status</code></td><td>Afficher l'etat</td></tr>
-</table>
-
-<h3>Volume</h3>
-
-<table>
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>volume</code></td><td>Afficher le volume</td></tr>
-    <tr><td><code>volume 50</code></td><td>Regler a 50%</td></tr>
-    <tr><td><code>volume_up</code>, <code>volume_down</code></td><td>+/- volume</td></tr>
-</table>
-
-<h3>Applications</h3>
-
-<table>
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>apps</code></td><td>Lister les apps installees</td></tr>
-    <tr><td><code>launch &lt;app&gt;</code></td><td>Lancer une app</td></tr>
-    <tr><td><code>apps_sync</code></td><td>Synchroniser apps.json</td></tr>
-</table>
-
 <h3 id="actions">Actions de scenario</h3>
+
+<p>Utilisez <code>atv reference</code> pour voir la documentation complete des actions.</p>
 
 <table>
     <tr><th>Action</th><th>Parametres</th><th>Description</th></tr>
     <tr><td><code>launch</code></td><td><code>app</code></td><td>Lancer une application</td></tr>
     <tr><td><code>wait</code></td><td><code>seconds</code></td><td>Pause fixe</td></tr>
     <tr><td><code>scenario</code></td><td><code>name</code></td><td>Executer un sous-scenario</td></tr>
-    <tr><td>Navigation</td><td><code>repeat</code>, <code>delay</code></td><td>up/down/left/right/select/menu/home</td></tr>
+    <tr><td>Navigation</td><td><code>repeat</code>, <code>delay</code></td><td>up/down/left/right/select/menu/home/home_double</td></tr>
     <tr><td>Swipe</td><td><code>repeat</code>, <code>delay</code></td><td>swipe_up/down/left/right</td></tr>
     <tr><td>Lecture</td><td><code>delay</code></td><td>play/pause/play_pause</td></tr>
 </table>
@@ -579,7 +559,7 @@
 
 <h3 id="aucune-apple-tv">Aucune Apple TV trouvee</h3>
 
-<p><strong>Symptome :</strong> <code>python3 apple_tv_power.py scan</code> ne retourne rien.</p>
+<p><strong>Symptome :</strong> <code>atv scan</code> ne retourne rien.</p>
 
 <p><strong>Solutions :</strong></p>
 
@@ -616,7 +596,7 @@
 </ol>
 
 <div class="cmd"><code>rm credentials.json</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>atv setup</code><button class="copy-btn">Copier</button></div>
 
 <h3>Connexion impossible depuis iPhone</h3>
 
@@ -638,23 +618,29 @@
 
 <p><strong>Solution :</strong> Vous utilisez GET au lieu de POST. Dans le raccourci, changez <strong>Methode</strong> de "GET" a <strong>"POST"</strong>.</p>
 
-<h3>Mode debug</h3>
-
-<p>Pour plus de details sur les erreurs :</p>
-
-<div class="cmd"><code>python3 apple_tv_power.py scenario mon_scenario -d "Salon" -v</code><button class="copy-btn">Copier</button></div>
-
 <hr>
 
 <h2 id="fichiers">Fichiers de configuration</h2>
 
 <table>
     <tr><th>Fichier</th><th>Description</th></tr>
+    <tr><td><code>config.json</code></td><td>Configuration (device par defaut)</td></tr>
     <tr><td><code>credentials.json</code></td><td>Credentials d'appairage (ne pas partager)</td></tr>
     <tr><td><code>apps.json</code></td><td>Alias des applications</td></tr>
     <tr><td><code>scenarios.json</code></td><td>Vos scenarios</td></tr>
-    <tr><td><code>schedule.json</code></td><td>Planifications horaires</td></tr>
 </table>
+
+<h3>config.json</h3>
+
+<p>Configuration generale :</p>
+
+<pre><code class="language-json">{
+  "default_device": "Salon"
+}</code></pre>
+
+<blockquote class="info">
+    Gerez ce fichier avec <code>atv config</code> ou <code>atv setup</code>.
+</blockquote>
 
 <h3>apps.json</h3>
 
@@ -668,8 +654,14 @@
 }</code></pre>
 
 <blockquote class="info">
-    Utilisez <code>python3 apple_tv_power.py apps -d "Salon"</code> pour voir les bundle IDs.
+    Utilisez <code>atv apps</code> pour voir les bundle IDs.
 </blockquote>
+
+<h3>Variable d'environnement</h3>
+
+<p>Vous pouvez aussi definir le device par defaut via la variable <code>ATV_DEVICE</code> :</p>
+
+<div class="cmd"><code>export ATV_DEVICE="Salon"</code><button class="copy-btn">Copier</button></div>
 
 </main>
 

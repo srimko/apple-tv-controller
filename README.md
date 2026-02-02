@@ -28,46 +28,32 @@ Controlez votre Apple TV depuis le terminal ou via des raccourcis iOS. Basé sur
 git clone https://github.com/username/apple-tv-controller.git
 cd apple-tv-controller
 
-# Installer les dependances
-pip install pyatv aiohttp
+# Installer le package
+pip install -e .
 ```
 
-### Etape 2 : Decouvrir votre Apple TV
+### Etape 2 : Configuration assistee
 
 ```bash
-python3 apple_tv_power.py scan
+atv setup
 ```
 
-Resultat attendu :
-```
-[0] Salon
-    Adresse: 192.168.1.91
-    Protocoles: AirPlay, Companion, RAOP
-```
+L'assistant interactif va :
+1. Scanner les Apple TV sur le reseau
+2. Vous faire choisir votre Apple TV
+3. Lancer l'appairage (entrez le code PIN affiche sur la TV)
+4. Sauvegarder le device par defaut
 
-> **Pas de resultat ?** Voir [Depannage > Aucune Apple TV trouvee](#aucune-apple-tv-trouvee)
+> **Pas d'Apple TV trouvee ?** Voir [Depannage > Aucune Apple TV trouvee](#aucune-apple-tv-trouvee)
 
-### Etape 3 : Appairer
+### Etape 3 : Tester
 
 ```bash
-python3 apple_tv_power.py pair -d "Salon"
-```
+# Tester la connexion
+atv test
 
-1. Un code PIN a 4 chiffres s'affiche sur votre TV
-2. Entrez-le dans le terminal
-3. Les credentials sont sauvegardes automatiquement
-
-> **Erreur ?** Voir [Depannage > Erreur d'appairage](#erreur-dappairage)
-
-### Etape 4 : Tester
-
-```bash
-# Appuyer sur OK
-python3 apple_tv_power.py select -d "Salon"
-
-# Naviguer
-python3 apple_tv_power.py up -d "Salon"
-python3 apple_tv_power.py down -d "Salon"
+# Voir l'etat de l'Apple TV
+atv status
 ```
 
 **Vous etes pret !** Continuez avec le tutoriel ci-dessous.
@@ -78,14 +64,27 @@ python3 apple_tv_power.py down -d "Salon"
 
 Un scenario est une sequence d'actions automatisees. Exemple : lancer Netflix et selectionner un profil.
 
-### Etape 1 : Creer le fichier scenarios.json
+### Option 1 : Enregistrer interactivement (recommande)
+
+```bash
+atv record netflix_profil1
+```
+
+L'assistant interactif vous permet de :
+- Choisir les actions (navigation, swipe, lecture...)
+- Ajouter des pauses
+- Tester en temps reel sur l'Apple TV
+- Sauvegarder automatiquement
+
+### Option 2 : Editer manuellement
 
 ```bash
 # Voir les scenarios existants
-python3 apple_tv_power.py scenarios
-```
+atv list
 
-### Etape 2 : Ajouter votre scenario
+# Voir les actions disponibles
+atv reference
+```
 
 Editez `scenarios.json` :
 
@@ -102,13 +101,15 @@ Editez `scenarios.json` :
 }
 ```
 
-### Etape 3 : Executer
+### Executer un scenario
 
 ```bash
-python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"
+atv run netflix_profil1
 ```
 
-### Etape 4 : Ajuster le timing
+> **Note :** Si vous avez configure un device par defaut avec `atv setup`, vous n'avez pas besoin de specifier `-d`.
+
+### Ajuster le timing
 
 Si ca va trop vite, augmentez le `wait` ou ajoutez un `delay` :
 
@@ -241,7 +242,7 @@ Declenchez vos scenarios depuis votre iPhone avec l'app Raccourcis.
 Sur votre Mac (laissez le terminal ouvert) :
 
 ```bash
-python3 apple_tv_power.py server
+atv server
 ```
 
 Resultat :
@@ -329,65 +330,46 @@ launchctl load ~/Library/LaunchAgents/com.appletv.server.plist
 
 ## Reference des commandes
 
-### Telecommande
+Utilisez `atv --help` pour voir toutes les commandes disponibles.
+
+### Commandes CLI
 
 | Commande | Description |
 |----------|-------------|
-| `up`, `down`, `left`, `right` | Navigation |
-| `select` | Bouton OK |
-| `menu` | Retour |
-| `home` | Ecran d'accueil |
-| `home_double` | App Switcher (double home) |
+| `atv setup` | Assistant de configuration interactif |
+| `atv config` | Voir/modifier la configuration |
+| `atv scan` | Scanner les Apple TV sur le reseau |
+| `atv test` | Tester la connexion |
+| `atv status` | Afficher l'etat de l'Apple TV |
+| `atv wake` | Allumer l'Apple TV |
+| `atv sleep` | Eteindre (veille) |
+| `atv launch <app>` | Lancer une application |
+| `atv apps` | Lister les applications installees |
+| `atv run <scenario>` | Executer un scenario |
+| `atv list` | Lister les scenarios |
+| `atv record <name>` | Enregistrer un scenario interactivement |
+| `atv reference` | Afficher la reference des actions |
+| `atv server` | Lancer le serveur HTTP |
 
-### Touch (Swipe)
+### Options globales
 
-| Commande | Description |
-|----------|-------------|
-| `swipe_up`, `swipe_down` | Glissement vertical |
-| `swipe_left`, `swipe_right` | Glissement horizontal |
+| Option | Description |
+|--------|-------------|
+| `-d`, `--device` | Nom de l'Apple TV |
+| `--help` | Afficher l'aide |
 
-> **Note :** Les swipes sont disponibles uniquement dans les scenarios.
-
-### Lecture
-
-| Commande | Description |
-|----------|-------------|
-| `play`, `pause`, `play_pause` | Controle lecture |
-| `stop` | Arreter |
-| `next`, `previous` | Piste suivante/precedente |
-
-### Alimentation
-
-| Commande | Description |
-|----------|-------------|
-| `on` | Allumer |
-| `off` | Eteindre (veille) |
-| `status` | Afficher l'etat |
-
-### Volume
-
-| Commande | Description |
-|----------|-------------|
-| `volume` | Afficher le volume |
-| `volume 50` | Regler a 50% |
-| `volume_up`, `volume_down` | +/- volume |
-
-### Applications
-
-| Commande | Description |
-|----------|-------------|
-| `apps` | Lister les apps installees |
-| `launch <app>` | Lancer une app |
-| `apps_sync` | Synchroniser apps.json |
+> **Astuce :** Definissez la variable d'environnement `ATV_DEVICE` ou utilisez `atv config` pour eviter de specifier `-d` a chaque fois.
 
 ### Actions de scenario
+
+Utilisez `atv reference` pour voir la documentation complete.
 
 | Action | Parametres | Description |
 |--------|------------|-------------|
 | `launch` | `app` | Lancer une application |
 | `wait` | `seconds` | Pause fixe |
 | `scenario` | `name` | Executer un sous-scenario |
-| Navigation | `repeat`, `delay` | up/down/left/right/select/menu/home |
+| Navigation | `repeat`, `delay` | up/down/left/right/select/menu/home/home_double |
 | Swipe | `repeat`, `delay` | swipe_up/down/left/right |
 | Lecture | `delay` | play/pause/play_pause |
 
@@ -397,7 +379,7 @@ launchctl load ~/Library/LaunchAgents/com.appletv.server.plist
 
 ### Aucune Apple TV trouvee
 
-**Symptome :** `python3 apple_tv_power.py scan` ne retourne rien.
+**Symptome :** `atv scan` ne retourne rien.
 
 **Solutions :**
 
@@ -411,7 +393,7 @@ launchctl load ~/Library/LaunchAgents/com.appletv.server.plist
 
 3. **Attendez quelques secondes et reessayez**
    - La decouverte peut prendre du temps
-   - Essayez : `python3 apple_tv_power.py scan` plusieurs fois
+   - Essayez : `atv scan` plusieurs fois
 
 4. **Verifiez le pare-feu Mac**
    - Preferences Systeme > Securite > Pare-feu
@@ -429,7 +411,7 @@ launchctl load ~/Library/LaunchAgents/com.appletv.server.plist
 2. **Supprimez les anciens credentials**
    ```bash
    rm credentials.json
-   python3 apple_tv_power.py pair -d "Salon"
+   atv setup
    ```
 
 3. **Redemarrez l'Apple TV**
@@ -507,24 +489,28 @@ launchctl load ~/Library/LaunchAgents/com.appletv.server.plist
 2. **Le timeout par defaut est de 2 minutes**
    - Si votre scenario est tres long, divisez-le en plusieurs
 
-### Mode debug
-
-Pour plus de details sur les erreurs :
-
-```bash
-python3 apple_tv_power.py scenario mon_scenario -d "Salon" -v
-```
-
 ---
 
 ## Fichiers de configuration
 
 | Fichier | Description |
 |---------|-------------|
+| `config.json` | Configuration (device par defaut) |
 | `credentials.json` | Credentials d'appairage (ne pas partager) |
 | `apps.json` | Alias des applications |
 | `scenarios.json` | Vos scenarios |
-| `schedule.json` | Planifications horaires |
+
+### config.json
+
+Configuration generale :
+
+```json
+{
+  "default_device": "Salon"
+}
+```
+
+> Gerez ce fichier avec `atv config` ou `atv setup`.
 
 ### apps.json
 
@@ -539,7 +525,16 @@ Alias pour les bundle IDs des applications :
 }
 ```
 
-> Utilisez `python3 apple_tv_power.py apps -d "Salon"` pour voir les bundle IDs.
+> Utilisez `atv apps` pour voir les bundle IDs.
+
+### Variable d'environnement
+
+Vous pouvez aussi definir le device par defaut via la variable `ATV_DEVICE` :
+
+```bash
+export ATV_DEVICE="Salon"
+atv status  # Utilisera "Salon" automatiquement
+```
 
 ---
 

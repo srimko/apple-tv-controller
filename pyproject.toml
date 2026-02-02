@@ -40,7 +40,7 @@ dev = [
 
 [project.scripts]
 apple-tv = "apple_tv.cli:run"
-atv = "apple_tv.interactive:main"
+atv = "apple_tv.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/cedrick/apple-tv-controller"
