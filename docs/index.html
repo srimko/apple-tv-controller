@@ -211,13 +211,69 @@
         .toc a:hover {
             text-decoration: underline;
         }
+        /* Mobile menu button */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: #1a1a2e;
+            color: #fff;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .menu-toggle:hover { background: #252542; }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        /* Responsive */
         @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 20px; }
+            .menu-toggle { display: block; }
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main { margin-left: 0; padding: 70px 20px 30px 20px; }
+            h1 { font-size: 1.6em; }
+            h2 { font-size: 1.3em; margin-top: 35px; }
+            table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+            th, td { padding: 10px 12px; font-size: 14px; }
+            pre { padding: 12px 15px; font-size: 13px; }
+            .cmd code { font-size: 13px; padding: 10px 12px; }
+            .cmd .copy-btn { padding: 6px 10px; font-size: 11px; }
+            .scenario-card { padding: 15px; }
+            .toc { padding: 15px 20px; }
+        }
+        @media (max-width: 480px) {
+            .main { padding: 60px 15px 25px 15px; }
+            h1 { font-size: 1.4em; }
+            pre, .cmd code { font-size: 12px; }
+            th, td { padding: 8px 10px; font-size: 13px; }
         }
     </style>
 </head>
 <body>
+
+<button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+<div class="sidebar-overlay" onclick="toggleMenu()"></div>
 
 <nav class="sidebar">
     <div class="title">
@@ -225,74 +281,77 @@
         <span>Documentation v2.0</span>
     </div>
 
-    <h3>Demarrage</h3>
-    <a href="#demarrage">Demarrage rapide</a>
-    <a href="#tutoriel">Premier scenario</a>
+    <h3>Démarrage</h3>
+    <a href="#demarrage">Démarrage rapide</a>
+    <a href="#tutoriel">Premier scénario</a>
 
     <h3>Guides</h3>
-    <a href="#scenarios-exemples">Scenarios prets a l'emploi</a>
-    <a href="#ios-shortcuts">Integration iOS</a>
+    <a href="#scenarios-exemples">Scénarios prêts à l'emploi</a>
+    <a href="#ios-shortcuts">Intégration iOS</a>
 
-    <h3>Reference</h3>
+    <h3>Référence</h3>
     <a href="#commandes">Commandes CLI</a>
-    <a href="#actions">Actions de scenario</a>
+    <a href="#actions">Actions de scénario</a>
     <a href="#fichiers">Fichiers config</a>
 
     <h3>Aide</h3>
-    <a href="#depannage">Depannage</a>
+    <a href="#depannage">Dépannage</a>
+
+    <h3>Liens</h3>
+    <a href="https://github.com/srimko/apple-tv-controller" target="_blank">GitHub</a>
 </nav>
 
 <main class="main">
 
 <h1>Apple TV Controller</h1>
 
-<p>Controlez votre Apple TV depuis le terminal ou via des raccourcis iOS. Base sur <a href="https://pyatv.dev/">pyatv</a>.</p>
+<p>Contrôlez votre Apple TV depuis le terminal ou via des raccourcis iOS. Basé sur <a href="https://pyatv.dev/">pyatv</a>.</p>
 
 <div class="toc">
     <h4>Sur cette page</h4>
     <ul>
-        <li><a href="#demarrage">Demarrage rapide (5 min)</a></li>
-        <li><a href="#tutoriel">Tutoriel : Votre premier scenario</a></li>
-        <li><a href="#scenarios-exemples">Scenarios prets a l'emploi</a></li>
-        <li><a href="#ios-shortcuts">Integration Raccourcis iOS</a></li>
-        <li><a href="#commandes">Reference des commandes CLI</a></li>
+        <li><a href="#demarrage">Démarrage rapide (5 min)</a></li>
+        <li><a href="#tutoriel">Tutoriel : Votre premier scénario</a></li>
+        <li><a href="#scenarios-exemples">Scénarios prêts à l'emploi</a></li>
+        <li><a href="#ios-shortcuts">Intégration Raccourcis iOS</a></li>
+        <li><a href="#commandes">Référence des commandes CLI</a></li>
         <li><a href="#fichiers">Fichiers de configuration</a></li>
-        <li><a href="#depannage">Depannage</a></li>
+        <li><a href="#depannage">Dépannage</a></li>
     </ul>
 </div>
 
 <hr>
 
-<h2 id="demarrage">Demarrage rapide (5 min)</h2>
+<h2 id="demarrage">Démarrage rapide (5 min)</h2>
 
-<h3>Prerequis</h3>
+<h3>Prérequis</h3>
 
 <ul>
     <li>Python 3.9+</li>
-    <li>Apple TV sur le meme reseau Wi-Fi que votre Mac</li>
-    <li>Nom de votre Apple TV (visible dans <strong>Reglages > General > Informations > Nom</strong>)</li>
+    <li>Apple TV sur le même réseau Wi-Fi que votre Mac</li>
+    <li>Nom de votre Apple TV (visible dans <strong>Réglages > Général > Informations > Nom</strong>)</li>
 </ul>
 
 <h3><span class="step-number">1</span> Installation</h3>
 
-<div class="cmd"><code>git clone https://github.com/username/apple-tv-controller.git</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>git clone https://github.com/srimko/apple-tv-controller.git</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>cd apple-tv-controller</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>pip install -e .</code><button class="copy-btn">Copier</button></div>
 
-<h3><span class="step-number">2</span> Configuration assistee</h3>
+<h3><span class="step-number">2</span> Configuration assistée</h3>
 
 <div class="cmd"><code>atv setup</code><button class="copy-btn">Copier</button></div>
 
 <p>L'assistant interactif va :</p>
 <ol>
-    <li>Scanner les Apple TV sur le reseau</li>
+    <li>Scanner les Apple TV sur le réseau</li>
     <li>Vous faire choisir votre Apple TV</li>
-    <li>Lancer l'appairage (entrez le code PIN affiche sur la TV)</li>
-    <li>Sauvegarder le device par defaut</li>
+    <li>Lancer l'appairage (entrez le code PIN affiché sur la TV)</li>
+    <li>Sauvegarder le device par défaut</li>
 </ol>
 
 <blockquote>
-    <strong>Pas de resultat ?</strong> Voir <a href="#aucune-apple-tv">Depannage > Aucune Apple TV trouvee</a>
+    <strong>Pas de résultat ?</strong> Voir <a href="#aucune-apple-tv">Dépannage > Aucune Apple TV trouvée</a>
 </blockquote>
 
 <h3><span class="step-number">3</span> Tester</h3>
@@ -301,22 +360,22 @@
 <div class="cmd"><code>atv status</code><button class="copy-btn">Copier</button></div>
 
 <blockquote class="success">
-    <strong>Vous etes pret !</strong> Continuez avec le tutoriel ci-dessous.
+    <strong>Vous êtes prêt !</strong> Continuez avec le tutoriel ci-dessous.
 </blockquote>
 
 <hr>
 
-<h2 id="tutoriel">Tutoriel : Votre premier scenario</h2>
+<h2 id="tutoriel">Tutoriel : Votre premier scénario</h2>
 
-<p>Un scenario est une sequence d'actions automatisees. Exemple : lancer Netflix et selectionner un profil.</p>
+<p>Un scénario est une séquence d'actions automatisées. Exemple : lancer Netflix et sélectionner un profil.</p>
 
-<h3>Option 1 : Enregistrer interactivement (recommande)</h3>
+<h3>Option 1 : Enregistrer interactivement (recommandé)</h3>
 
 <div class="cmd"><code>atv record netflix_profil1</code><button class="copy-btn">Copier</button></div>
 
-<p>L'assistant interactif vous permet de choisir les actions, ajouter des pauses, et tester en temps reel.</p>
+<p>L'assistant interactif vous permet de choisir les actions, ajouter des pauses, et tester en temps réel.</p>
 
-<h3>Option 2 : Editer manuellement</h3>
+<h3>Option 2 : Éditer manuellement</h3>
 
 <div class="cmd"><code>atv list</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>atv reference</code><button class="copy-btn">Copier</button></div>
@@ -325,7 +384,7 @@
 
 <pre><code class="language-json">{
   "netflix_profil1": {
-    "description": "Lancer Netflix et selectionner le 1er profil",
+    "description": "Lancer Netflix et sélectionner le 1er profil",
     "steps": [
       {"action": "launch", "app": "netflix"},
       {"action": "wait", "seconds": 4},
@@ -334,17 +393,17 @@
   }
 }</code></pre>
 
-<h3>Executer un scenario</h3>
+<h3>Exécuter un scénario</h3>
 
 <div class="cmd"><code>atv run netflix_profil1</code><button class="copy-btn">Copier</button></div>
 
 <blockquote class="info">
-    Si vous avez configure un device par defaut avec <code>atv setup</code>, vous n'avez pas besoin de specifier <code>-d</code>.
+    Si vous avez configuré un device par défaut avec <code>atv setup</code>, vous n'avez pas besoin de spécifier <code>-d</code>.
 </blockquote>
 
 <h3>Ajuster le timing</h3>
 
-<p>Si ca va trop vite, augmentez le <code>wait</code> ou ajoutez un <code>delay</code> :</p>
+<p>Si ça va trop vite, augmentez le <code>wait</code> ou ajoutez un <code>delay</code> :</p>
 
 <pre><code class="language-json">{
   "netflix_profil1": {
@@ -358,24 +417,24 @@
   }
 }</code></pre>
 
-<h3>Comprendre les parametres</h3>
+<h3>Comprendre les paramètres</h3>
 
 <table>
-    <tr><th>Parametre</th><th>Description</th><th>Defaut</th></tr>
-    <tr><td><code>action</code></td><td>L'action a executer (obligatoire)</td><td>-</td></tr>
+    <tr><th>Paramètre</th><th>Description</th><th>Défaut</th></tr>
+    <tr><td><code>action</code></td><td>L'action à exécuter (obligatoire)</td><td>-</td></tr>
     <tr><td><code>wait</code> + <code>seconds</code></td><td>Pause fixe en secondes</td><td>-</td></tr>
-    <tr><td><code>delay</code></td><td>Pause apres l'action</td><td>0.5s</td></tr>
-    <tr><td><code>repeat</code></td><td>Nombre de repetitions</td><td>1</td></tr>
+    <tr><td><code>delay</code></td><td>Pause après l'action</td><td>0.5s</td></tr>
+    <tr><td><code>repeat</code></td><td>Nombre de répétitions</td><td>1</td></tr>
 </table>
 
 <hr>
 
-<h2 id="scenarios-exemples">Scenarios prets a l'emploi</h2>
+<h2 id="scenarios-exemples">Scénarios prêts à l'emploi</h2>
 
-<p>Copiez ces scenarios dans votre <code>scenarios.json</code>.</p>
+<p>Copiez ces scénarios dans votre <code>scenarios.json</code>.</p>
 
 <div class="scenario-card">
-    <h4>Netflix - Selectionner un profil</h4>
+    <h4>Netflix - Sélectionner un profil</h4>
     <pre><code class="language-json">{
   "netflix_profil1": {
     "description": "Netflix - Premier profil",
@@ -386,7 +445,7 @@
     ]
   },
   "netflix_profil2": {
-    "description": "Netflix - Deuxieme profil",
+    "description": "Netflix - Deuxième profil",
     "steps": [
       {"action": "launch", "app": "netflix"},
       {"action": "wait", "seconds": 4},
@@ -416,7 +475,7 @@
     <h4>Fermer toutes les apps</h4>
     <pre><code class="language-json">{
   "close_apps": {
-    "description": "Fermer les apps en arriere-plan",
+    "description": "Fermer les apps en arrière-plan",
     "steps": [
       {"action": "home_double"},
       {"action": "wait", "seconds": 1},
@@ -430,7 +489,7 @@
     <h4>Routine du soir</h4>
     <pre><code class="language-json">{
   "bonne_nuit": {
-    "description": "Fermer les apps et eteindre",
+    "description": "Fermer les apps et éteindre",
     "steps": [
       {"action": "scenario", "name": "close_apps"},
       {"action": "wait", "seconds": 1},
@@ -439,15 +498,15 @@
   }
 }</code></pre>
     <blockquote class="info">
-        L'action <code>scenario</code> permet d'inclure un scenario dans un autre.
+        L'action <code>scenario</code> permet d'inclure un scénario dans un autre.
     </blockquote>
 </div>
 
 <hr>
 
-<h2 id="ios-shortcuts">Integration Raccourcis iOS</h2>
+<h2 id="ios-shortcuts">Intégration Raccourcis iOS</h2>
 
-<p>Declenchez vos scenarios depuis votre iPhone avec l'app Raccourcis.</p>
+<p>Déclenchez vos scénarios depuis votre iPhone avec l'app Raccourcis.</p>
 
 <h3><span class="step-number">1</span> Lancer le serveur HTTP</h3>
 
@@ -467,7 +526,7 @@
 <div class="cmd"><code>curl http://192.168.1.50:8888/scenarios</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>curl -X POST "http://192.168.1.50:8888/scenario/netflix_profil1?device=Salon"</code><button class="copy-btn">Copier</button></div>
 
-<h3><span class="step-number">4</span> Creer le raccourci iOS</h3>
+<h3><span class="step-number">4</span> Créer le raccourci iOS</h3>
 
 <ol>
     <li>Ouvrir l'app <strong>Raccourcis</strong> sur iPhone</li>
@@ -477,33 +536,33 @@
         <ul>
             <li><strong>URL</strong> : <code>http://192.168.1.50:8888/scenario/netflix_profil1?device=Salon</code></li>
             <li>Appuyer sur <strong>Afficher plus</strong></li>
-            <li><strong>Methode</strong> : <code>POST</code></li>
+            <li><strong>Méthode</strong> : <code>POST</code></li>
         </ul>
     </li>
     <li>Renommer le raccourci (ex: "Netflix Salon")</li>
-    <li>Optionnel : <strong>Ajouter a l'ecran d'accueil</strong></li>
+    <li>Optionnel : <strong>Ajouter à l'écran d'accueil</strong></li>
 </ol>
 
 <h3><span class="step-number">5</span> Utiliser</h3>
 
 <ul>
-    <li>Tap sur l'icone de l'ecran d'accueil</li>
+    <li>Tap sur l'icône de l'écran d'accueil</li>
     <li>Ou dire <strong>"Dis Siri, Netflix Salon"</strong></li>
 </ul>
 
 <h3>Endpoints disponibles</h3>
 
 <table>
-    <tr><th>Methode</th><th>URL</th><th>Description</th></tr>
-    <tr><td>GET</td><td><code>/health</code></td><td>Verifier que le serveur tourne</td></tr>
-    <tr><td>GET</td><td><code>/scenarios</code></td><td>Lister les scenarios</td></tr>
-    <tr><td>POST</td><td><code>/scenario/{nom}?device=Salon</code></td><td>Executer un scenario</td></tr>
-    <tr><td>POST</td><td><code>/shutdown</code></td><td>Arreter le serveur</td></tr>
+    <tr><th>Méthode</th><th>URL</th><th>Description</th></tr>
+    <tr><td>GET</td><td><code>/health</code></td><td>Vérifier que le serveur tourne</td></tr>
+    <tr><td>GET</td><td><code>/scenarios</code></td><td>Lister les scénarios</td></tr>
+    <tr><td>POST</td><td><code>/scenario/{nom}?device=Salon</code></td><td>Exécuter un scénario</td></tr>
+    <tr><td>POST</td><td><code>/shutdown</code></td><td>Arrêter le serveur</td></tr>
 </table>
 
 <hr>
 
-<h2 id="commandes">Reference des commandes</h2>
+<h2 id="commandes">Référence des commandes</h2>
 
 <p>Utilisez <code>atv --help</code> pour voir toutes les commandes disponibles.</p>
 
@@ -513,17 +572,17 @@
     <tr><th>Commande</th><th>Description</th></tr>
     <tr><td><code>atv setup</code></td><td>Assistant de configuration interactif</td></tr>
     <tr><td><code>atv config</code></td><td>Voir/modifier la configuration</td></tr>
-    <tr><td><code>atv scan</code></td><td>Scanner les Apple TV sur le reseau</td></tr>
+    <tr><td><code>atv scan</code></td><td>Scanner les Apple TV sur le réseau</td></tr>
     <tr><td><code>atv test</code></td><td>Tester la connexion</td></tr>
-    <tr><td><code>atv status</code></td><td>Afficher l'etat de l'Apple TV</td></tr>
+    <tr><td><code>atv status</code></td><td>Afficher l'état de l'Apple TV</td></tr>
     <tr><td><code>atv wake</code></td><td>Allumer l'Apple TV</td></tr>
-    <tr><td><code>atv sleep</code></td><td>Eteindre (veille)</td></tr>
+    <tr><td><code>atv sleep</code></td><td>Éteindre (veille)</td></tr>
     <tr><td><code>atv launch &lt;app&gt;</code></td><td>Lancer une application</td></tr>
-    <tr><td><code>atv apps</code></td><td>Lister les applications installees</td></tr>
-    <tr><td><code>atv run &lt;scenario&gt;</code></td><td>Executer un scenario</td></tr>
-    <tr><td><code>atv list</code></td><td>Lister les scenarios</td></tr>
-    <tr><td><code>atv record &lt;name&gt;</code></td><td>Enregistrer un scenario interactivement</td></tr>
-    <tr><td><code>atv reference</code></td><td>Afficher la reference des actions</td></tr>
+    <tr><td><code>atv apps</code></td><td>Lister les applications installées</td></tr>
+    <tr><td><code>atv run &lt;scenario&gt;</code></td><td>Exécuter un scénario</td></tr>
+    <tr><td><code>atv list</code></td><td>Lister les scénarios</td></tr>
+    <tr><td><code>atv record &lt;name&gt;</code></td><td>Enregistrer un scénario interactivement</td></tr>
+    <tr><td><code>atv reference</code></td><td>Afficher la référence des actions</td></tr>
     <tr><td><code>atv server</code></td><td>Lancer le serveur HTTP</td></tr>
 </table>
 
@@ -536,18 +595,18 @@
 </table>
 
 <blockquote class="info">
-    Definissez la variable d'environnement <code>ATV_DEVICE</code> ou utilisez <code>atv config</code> pour eviter de specifier <code>-d</code> a chaque fois.
+    Définissez la variable d'environnement <code>ATV_DEVICE</code> ou utilisez <code>atv config</code> pour éviter de spécifier <code>-d</code> à chaque fois.
 </blockquote>
 
-<h3 id="actions">Actions de scenario</h3>
+<h3 id="actions">Actions de scénario</h3>
 
-<p>Utilisez <code>atv reference</code> pour voir la documentation complete des actions.</p>
+<p>Utilisez <code>atv reference</code> pour voir la documentation complète des actions.</p>
 
 <table>
-    <tr><th>Action</th><th>Parametres</th><th>Description</th></tr>
+    <tr><th>Action</th><th>Paramètres</th><th>Description</th></tr>
     <tr><td><code>launch</code></td><td><code>app</code></td><td>Lancer une application</td></tr>
     <tr><td><code>wait</code></td><td><code>seconds</code></td><td>Pause fixe</td></tr>
-    <tr><td><code>scenario</code></td><td><code>name</code></td><td>Executer un sous-scenario</td></tr>
+    <tr><td><code>scenario</code></td><td><code>name</code></td><td>Exécuter un sous-scénario</td></tr>
     <tr><td>Navigation</td><td><code>repeat</code>, <code>delay</code></td><td>up/down/left/right/select/menu/home/home_double</td></tr>
     <tr><td>Swipe</td><td><code>repeat</code>, <code>delay</code></td><td>swipe_up/down/left/right</td></tr>
     <tr><td>Lecture</td><td><code>delay</code></td><td>play/pause/play_pause</td></tr>
@@ -555,30 +614,30 @@
 
 <hr>
 
-<h2 id="depannage">Depannage</h2>
+<h2 id="depannage">Dépannage</h2>
 
-<h3 id="aucune-apple-tv">Aucune Apple TV trouvee</h3>
+<h3 id="aucune-apple-tv">Aucune Apple TV trouvée</h3>
 
-<p><strong>Symptome :</strong> <code>atv scan</code> ne retourne rien.</p>
+<p><strong>Symptôme :</strong> <code>atv scan</code> ne retourne rien.</p>
 
 <p><strong>Solutions :</strong></p>
 
 <ol>
-    <li><strong>Verifiez que l'Apple TV est allumee</strong>
+    <li><strong>Vérifiez que l'Apple TV est allumée</strong>
         <ul>
-            <li>L'ecran doit etre actif (pas en veille profonde)</li>
-            <li>Essayez d'appuyer sur la telecommande physique d'abord</li>
+            <li>L'écran doit être actif (pas en veille profonde)</li>
+            <li>Essayez d'appuyer sur la télécommande physique d'abord</li>
         </ul>
     </li>
-    <li><strong>Verifiez le reseau</strong>
+    <li><strong>Vérifiez le réseau</strong>
         <ul>
-            <li>Mac et Apple TV doivent etre sur le <strong>meme reseau Wi-Fi</strong></li>
-            <li>Certains routeurs isolent les appareils - desactivez cette option</li>
+            <li>Mac et Apple TV doivent être sur le <strong>même réseau Wi-Fi</strong></li>
+            <li>Certains routeurs isolent les appareils - désactivez cette option</li>
         </ul>
     </li>
-    <li><strong>Verifiez le pare-feu Mac</strong>
+    <li><strong>Vérifiez le pare-feu Mac</strong>
         <ul>
-            <li>Preferences Systeme > Securite > Pare-feu</li>
+            <li>Préférences Système > Sécurité > Pare-feu</li>
             <li>Ajoutez Python aux exceptions</li>
         </ul>
     </li>
@@ -586,12 +645,12 @@
 
 <h3>Erreur d'appairage</h3>
 
-<p><strong>Symptome :</strong> Le PIN ne fonctionne pas ou l'appairage echoue.</p>
+<p><strong>Symptôme :</strong> Le PIN ne fonctionne pas ou l'appairage échoue.</p>
 
 <p><strong>Solutions :</strong></p>
 
 <ol>
-    <li><strong>Assurez-vous d'entrer le code rapidement</strong> - Le PIN expire apres ~30 secondes</li>
+    <li><strong>Assurez-vous d'entrer le code rapidement</strong> - Le PIN expire après ~30 secondes</li>
     <li><strong>Supprimez les anciens credentials :</strong></li>
 </ol>
 
@@ -600,23 +659,23 @@
 
 <h3>Connexion impossible depuis iPhone</h3>
 
-<p><strong>Symptome :</strong> "Connexion impossible" dans Raccourcis iOS.</p>
+<p><strong>Symptôme :</strong> "Connexion impossible" dans Raccourcis iOS.</p>
 
 <p><strong>Solutions :</strong></p>
 
 <ol>
-    <li>Verifiez que le serveur tourne : <code>curl http://localhost:8888/health</code></li>
-    <li>Verifiez l'IP : <code>ipconfig getifaddr en0</code></li>
+    <li>Vérifiez que le serveur tourne : <code>curl http://localhost:8888/health</code></li>
+    <li>Vérifiez l'IP : <code>ipconfig getifaddr en0</code></li>
     <li>Testez depuis le Mac avec l'IP externe</li>
-    <li>Verifiez le pare-feu (desactivez temporairement pour tester)</li>
-    <li>Verifiez que iPhone et Mac sont sur le meme Wi-Fi</li>
+    <li>Vérifiez le pare-feu (désactivez temporairement pour tester)</li>
+    <li>Vérifiez que iPhone et Mac sont sur le même Wi-Fi</li>
 </ol>
 
 <h3>Erreur 405 Method Not Allowed</h3>
 
-<p><strong>Symptome :</strong> Le raccourci retourne "405 Method Not Allowed".</p>
+<p><strong>Symptôme :</strong> Le raccourci retourne "405 Method Not Allowed".</p>
 
-<p><strong>Solution :</strong> Vous utilisez GET au lieu de POST. Dans le raccourci, changez <strong>Methode</strong> de "GET" a <strong>"POST"</strong>.</p>
+<p><strong>Solution :</strong> Vous utilisez GET au lieu de POST. Dans le raccourci, changez <strong>Méthode</strong> de "GET" à <strong>"POST"</strong>.</p>
 
 <hr>
 
@@ -624,22 +683,22 @@
 
 <table>
     <tr><th>Fichier</th><th>Description</th></tr>
-    <tr><td><code>config.json</code></td><td>Configuration (device par defaut)</td></tr>
+    <tr><td><code>config.json</code></td><td>Configuration (device par défaut)</td></tr>
     <tr><td><code>credentials.json</code></td><td>Credentials d'appairage (ne pas partager)</td></tr>
     <tr><td><code>apps.json</code></td><td>Alias des applications</td></tr>
-    <tr><td><code>scenarios.json</code></td><td>Vos scenarios</td></tr>
+    <tr><td><code>scenarios.json</code></td><td>Vos scénarios</td></tr>
 </table>
 
 <h3>config.json</h3>
 
-<p>Configuration generale :</p>
+<p>Configuration générale :</p>
 
 <pre><code class="language-json">{
   "default_device": "Salon"
 }</code></pre>
 
 <blockquote class="info">
-    Gerez ce fichier avec <code>atv config</code> ou <code>atv setup</code>.
+    Gérez ce fichier avec <code>atv config</code> ou <code>atv setup</code>.
 </blockquote>
 
 <h3>apps.json</h3>
@@ -659,19 +718,35 @@
 
 <h3>Variable d'environnement</h3>
 
-<p>Vous pouvez aussi definir le device par defaut via la variable <code>ATV_DEVICE</code> :</p>
+<p>Vous pouvez aussi définir le device par défaut via la variable <code>ATV_DEVICE</code> :</p>
 
 <div class="cmd"><code>export ATV_DEVICE="Salon"</code><button class="copy-btn">Copier</button></div>
 
 </main>
 
 <script>
+// Mobile menu toggle
+function toggleMenu() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('open');
+}
+
+// Close menu when clicking a link (mobile)
+document.querySelectorAll('.sidebar a').forEach(function(link) {
+    link.addEventListener('click', function() {
+        if (window.innerWidth <= 900) {
+            toggleMenu();
+        }
+    });
+});
+
+// Copy button functionality
 document.querySelectorAll('.cmd .copy-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
         var code = btn.parentElement.querySelector('code');
         var text = code.textContent;
         navigator.clipboard.writeText(text).then(function() {
-            btn.textContent = 'Copie!';
+            btn.textContent = 'Copié !';
             btn.classList.add('copied');
             setTimeout(function() {
                 btn.textContent = 'Copier';

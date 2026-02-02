@@ -1,6 +1,8 @@
 # Apple TV Controller
 
-Controlez votre Apple TV depuis le terminal ou via des raccourcis iOS. Basé sur [pyatv](https://pyatv.dev/).
+Contrôlez votre Apple TV depuis le terminal ou via des raccourcis iOS. Basé sur [pyatv](https://pyatv.dev/).
+
+**[Documentation en ligne](https://srimko.github.io/apple-tv-controller/)**
 
 ## Table des matieres
 
