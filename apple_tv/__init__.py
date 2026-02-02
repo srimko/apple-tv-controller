@@ -6,6 +6,8 @@ Usage:
     python -m apple_tv --help
 """
 
+__version__ = "1.0.0"
+
 from .apps import get_bundle_id, launch_app, list_apps, load_apps_config, sync_apps_config
 from .config import (
     APPS_CONFIG_FILE,
@@ -39,6 +41,7 @@ from .controls import (
     volume_up,
 )
 from .exceptions import AppleTVError, DeviceNotFoundError, FeatureNotAvailableError
+from .models import ValidationError, validate_scenarios, validate_schedules
 from .scenarios import load_scenarios, run_scenario
 from .scheduler import ScheduleEntry, load_schedules, run_scheduler, save_schedules
 from .server import run_server
@@ -55,6 +58,10 @@ __all__ = [
     "AppleTVError",
     "DeviceNotFoundError",
     "FeatureNotAvailableError",
+    "ValidationError",
+    # Validation
+    "validate_scenarios",
+    "validate_schedules",
     # Connection
     "connect_atv",
     "pair_device",

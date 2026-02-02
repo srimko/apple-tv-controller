@@ -17,6 +17,7 @@ from .config import (
 )
 from .connection import connect_atv, scan_devices, select_device
 from .exceptions import DeviceNotFoundError, FeatureNotAvailableError
+from .models import ValidationError, validate_schedules
 from .scenarios import load_scenarios, run_scenario
 
 
@@ -92,9 +93,23 @@ class ScheduleEntry:
         return ", ".join(WEEKDAY_NAMES[d] for d in sorted(self.weekdays))
 
 
-def load_schedules() -> list[ScheduleEntry]:
-    """Charge les planifications depuis schedule.json."""
+def load_schedules(*, validate: bool = True) -> list[ScheduleEntry]:
+    """Charge les planifications depuis schedule.json.
+
+    Args:
+        validate: Si True, valide les planifications au chargement.
+
+    Returns:
+        Liste des planifications.
+
+    Raises:
+        ValidationError: Si validate=True et une planification est invalide.
+    """
     data = load_json(SCHEDULE_FILE, {"schedules": []})
+
+    if validate:
+        validate_schedules(data)
+
     return [ScheduleEntry.from_dict(entry) for entry in data.get("schedules", [])]
 
 
@@ -106,48 +121,57 @@ def save_schedules(schedules: list[ScheduleEntry]) -> None:
 
 def show_schedules() -> None:
     """Affiche les planifications."""
-    schedules = load_schedules()
-
-    if not schedules:
-        print("Aucune planification configuree.")
-        print(f"\nFichier: {SCHEDULE_FILE}")
-        print("\nPour ajouter: python -m apple_tv schedule-add")
+    try:
+        schedules = load_schedules()
+    except ValidationError as e:
+        logger.error(f"Erreur de validation:\n{e}")
         return
 
-    print("Planifications configurees:\n")
+    if not schedules:
+        logger.info("Aucune planification configuree.")
+        logger.info(f"\nFichier: {SCHEDULE_FILE}")
+        logger.info("\nPour ajouter: python -m apple_tv schedule-add")
+        return
+
+    logger.info("Planifications configurees:\n")
 
     for i, entry in enumerate(schedules):
         status_icon = "+" if entry.enabled else "-"
         status_text = "ON" if entry.enabled else "OFF"
 
-        print(f"[{i}] {status_icon} {entry.scenario}")
-        print(f"    Appareil: {entry.device}")
-        print(f"    Heure:    {entry.time_str}")
-        print(f"    Jours:    {entry.weekdays_str}")
-        print(f"    Statut:   {status_text}")
-        print()
+        logger.info(f"[{i}] {status_icon} {entry.scenario}")
+        logger.info(f"    Appareil: {entry.device}")
+        logger.info(f"    Heure:    {entry.time_str}")
+        logger.info(f"    Jours:    {entry.weekdays_str}")
+        logger.info(f"    Statut:   {status_text}")
+        logger.info("")
 
-    print(f"Total: {len(schedules)} planification(s)")
-    print(f"Fichier: {SCHEDULE_FILE}")
+    logger.info(f"Total: {len(schedules)} planification(s)")
+    logger.info(f"Fichier: {SCHEDULE_FILE}")
 
 
 def add_schedule_interactive() -> None:
     """Ajoute une planification interactivement."""
-    print("Ajout d'une nouvelle planification\n")
+    logger.info("Ajout d'une nouvelle planification\n")
 
     # Charger les scenarios
-    scenarios = load_scenarios()
+    try:
+        scenarios = load_scenarios()
+    except ValidationError as e:
+        logger.error(f"Erreur de validation des scenarios:\n{e}")
+        return
+
     if not scenarios:
         logger.error("Aucun scenario disponible.")
         return
 
     # Afficher les scenarios
-    print("Scenarios disponibles:")
+    logger.info("Scenarios disponibles:")
     scenario_list = list(scenarios.keys())
     for i, name in enumerate(scenario_list):
         desc = scenarios[name].get("description", "")
-        print(f"  [{i}] {name} - {desc}")
-    print()
+        logger.info(f"  [{i}] {name} - {desc}")
+    logger.info("")
 
     # Selection du scenario
     while True:
@@ -156,9 +180,9 @@ def add_schedule_interactive() -> None:
             if 0 <= choice < len(scenario_list):
                 scenario_name = scenario_list[choice]
                 break
-            print("Index invalide.")
+            logger.warning("Index invalide.")
         except ValueError:
-            print("Entrez un nombre.")
+            logger.warning("Entrez un nombre.")
 
     # Appareil
     device = input("\nNom de l'appareil (ex: Salon): ").strip() or "Salon"
@@ -172,13 +196,13 @@ def add_schedule_interactive() -> None:
             minute = int(parts[1]) if len(parts) > 1 else 0
             if 0 <= hour <= 23 and 0 <= minute <= 59:
                 break
-            print("Heure invalide (0-23, minutes 0-59)")
+            logger.warning("Heure invalide (0-23, minutes 0-59)")
         except (ValueError, IndexError):
-            print("Format invalide. Utilisez HH:MM")
+            logger.warning("Format invalide. Utilisez HH:MM")
 
     # Jours
-    print("\nJours (0=Dim, 1=Lun, 2=Mar, 3=Mer, 4=Jeu, 5=Ven, 6=Sam)")
-    print("Exemples: 1,2,3,4,5 (semaine), 0,6 (weekend), vide (tous)")
+    logger.info("\nJours (0=Dim, 1=Lun, 2=Mar, 3=Mer, 4=Jeu, 5=Ven, 6=Sam)")
+    logger.info("Exemples: 1,2,3,4,5 (semaine), 0,6 (weekend), vide (tous)")
     days_input = input("Jours: ").strip()
 
     weekdays: Optional[list[int]] = None
@@ -201,20 +225,20 @@ def add_schedule_interactive() -> None:
         enabled=True,
     )
 
-    schedules = load_schedules()
+    schedules = load_schedules(validate=False)
     schedules.append(entry)
     save_schedules(schedules)
 
-    print(f"\n[OK] Planification ajoutee!")
-    print(f"  Scenario: {scenario_name}")
-    print(f"  Appareil: {device}")
-    print(f"  Heure:    {entry.time_str}")
-    print(f"  Jours:    {entry.weekdays_str}")
+    logger.info(f"\n[OK] Planification ajoutee!")
+    logger.info(f"  Scenario: {scenario_name}")
+    logger.info(f"  Appareil: {device}")
+    logger.info(f"  Heure:    {entry.time_str}")
+    logger.info(f"  Jours:    {entry.weekdays_str}")
 
 
 def remove_schedule(index: int) -> bool:
     """Supprime une planification par son index."""
-    schedules = load_schedules()
+    schedules = load_schedules(validate=False)
 
     if not schedules:
         logger.error("Aucune planification a supprimer.")
@@ -250,11 +274,11 @@ async def execute_scheduled_entry(entry: ScheduleEntry) -> bool:
 
 async def run_scheduler() -> None:
     """Boucle principale du scheduler."""
-    print("=" * 50)
-    print("Scheduler Apple TV demarre")
-    print("=" * 50)
-    print(f"Fichier: {SCHEDULE_FILE}")
-    print("Ctrl+C pour arreter\n")
+    logger.info("=" * 50)
+    logger.info("Scheduler Apple TV demarre")
+    logger.info("=" * 50)
+    logger.info(f"Fichier: {SCHEDULE_FILE}")
+    logger.info("Ctrl+C pour arreter\n")
 
     last_check: Optional[tuple[int, int]] = None
 
@@ -267,7 +291,11 @@ async def run_scheduler() -> None:
             last_check = current_minute
 
             # Recharger les planifications (modifs a chaud)
-            schedules = load_schedules()
+            try:
+                schedules = load_schedules()
+            except ValidationError as e:
+                logger.error(f"Erreur de validation: {e}")
+                schedules = []
 
             for entry in schedules:
                 if not entry.enabled:

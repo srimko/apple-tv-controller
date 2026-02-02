@@ -27,15 +27,15 @@ async def get_power_status(atv: AppleTV) -> str:
     turn_on_available = features.in_state(FeatureState.Available, FeatureName.TurnOn)
     turn_off_available = features.in_state(FeatureState.Available, FeatureName.TurnOff)
 
-    print("Fonctionnalites disponibles:")
-    print(f"  - PowerState: {'Oui' if power_available else 'Non'}")
-    print(f"  - TurnOn:     {'Oui' if turn_on_available else 'Non'}")
-    print(f"  - TurnOff:    {'Oui' if turn_off_available else 'Non'}")
-    print()
+    logger.info("Fonctionnalites disponibles:")
+    logger.info(f"  - PowerState: {'Oui' if power_available else 'Non'}")
+    logger.info(f"  - TurnOn:     {'Oui' if turn_on_available else 'Non'}")
+    logger.info(f"  - TurnOff:    {'Oui' if turn_off_available else 'Non'}")
+    logger.info("")
 
     if power_available:
         state = atv.power.power_state
-        print(f"Etat: {state.name}")
+        logger.info(f"Etat: {state.name}")
         return state.name
     return "Unknown"
 

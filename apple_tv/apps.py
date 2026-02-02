@@ -36,11 +36,11 @@ def get_bundle_id(app_name: str) -> str:
 async def list_apps(atv: AppleTV) -> list[Any]:
     """Liste les applications installees."""
     apps = await atv.apps.app_list()
-    print("\nApplications installees:\n")
+    logger.info("\nApplications installees:\n")
     for app in sorted(apps, key=lambda a: a.name.lower()):
-        print(f"  {app.name}")
-        print(f"    {app.identifier}\n")
-    print(f"Total: {len(apps)} applications")
+        logger.info(f"  {app.name}")
+        logger.info(f"    {app.identifier}\n")
+    logger.info(f"Total: {len(apps)} applications")
     return apps
 
 
@@ -88,10 +88,10 @@ async def sync_apps_config(atv: AppleTV) -> int:
 def show_apps_config() -> None:
     """Affiche la configuration des applications."""
     config = load_apps_config()
-    print(f"\nConfiguration des applications ({APPS_CONFIG_FILE}):\n")
+    logger.info(f"\nConfiguration des applications ({APPS_CONFIG_FILE}):\n")
 
     if config:
         max_len = max(len(a) for a in config)
         for alias, bundle_id in sorted(config.items()):
-            print(f"  {alias:<{max_len}}  ->  {bundle_id}")
-        print(f"\n{len(config)} application(s)")
+            logger.info(f"  {alias:<{max_len}}  ->  {bundle_id}")
+        logger.info(f"\n{len(config)} application(s)")

@@ -16,31 +16,51 @@ from .config import (
     logger,
     save_json,
 )
+from .models import ValidationError, validate_scenarios
 
 
-def load_scenarios() -> dict[str, dict[str, Any]]:
-    """Charge les scenarios."""
+def load_scenarios(*, validate: bool = True) -> dict[str, dict[str, Any]]:
+    """Charge les scenarios.
+
+    Args:
+        validate: Si True, valide les scenarios au chargement.
+
+    Returns:
+        Dictionnaire des scenarios.
+
+    Raises:
+        ValidationError: Si validate=True et un scenario est invalide.
+    """
     scenarios = load_json(SCENARIOS_FILE)
     if not scenarios:
         save_json(SCENARIOS_FILE, DEFAULT_SCENARIOS)
-        return DEFAULT_SCENARIOS.copy()
+        scenarios = DEFAULT_SCENARIOS.copy()
+
+    if validate:
+        validate_scenarios(scenarios)
+
     return scenarios
 
 
 def show_scenarios() -> None:
     """Affiche les scenarios disponibles."""
-    scenarios = load_scenarios()
-    print("\nScenarios disponibles:\n")
-    print(f"{'Nom':<25} Description")
-    print("-" * 70)
+    try:
+        scenarios = load_scenarios()
+    except ValidationError as e:
+        logger.error(f"Erreur de validation:\n{e}")
+        return
+
+    logger.info("\nScenarios disponibles:\n")
+    logger.info(f"{'Nom':<25} Description")
+    logger.info("-" * 70)
 
     for name, data in sorted(scenarios.items()):
         desc = data.get("description", "-")
         steps = len(data.get("steps", []))
-        print(f"{name:<25} {desc} ({steps} etapes)")
+        logger.info(f"{name:<25} {desc} ({steps} etapes)")
 
-    print(f"\nTotal: {len(scenarios)} scenario(s)")
-    print(f"Fichier: {SCENARIOS_FILE}")
+    logger.info(f"\nTotal: {len(scenarios)} scenario(s)")
+    logger.info(f"Fichier: {SCENARIOS_FILE}")
 
 
 async def execute_step(atv: AppleTV, step: dict[str, Any], num: int) -> bool:
@@ -89,20 +109,20 @@ async def execute_step(atv: AppleTV, step: dict[str, Any], num: int) -> bool:
             if not app:
                 logger.error(f"  [{num}] Parametre 'app' manquant")
                 return False
-            print(f"  [{num}] Lancement {app}...{info}")
+            logger.info(f"  [{num}] Lancement {app}...{info}")
             await launch_app(atv, app)
 
         elif action == "wait":
             secs = step.get("seconds", 1)
-            print(f"  [{num}] Attente {secs}s...{info}")
+            logger.info(f"  [{num}] Attente {secs}s...{info}")
             await asyncio.sleep(secs)
 
         elif action in nav_actions:
-            print(f"  [{num}] {symbols.get(action, '')} {action.capitalize()}{info}")
+            logger.info(f"  [{num}] {symbols.get(action, '')} {action.capitalize()}{info}")
             await nav_actions[action]()
 
         elif action in play_actions:
-            print(f"  [{num}] {symbols.get(action, '')} {action.capitalize()}{info}")
+            logger.info(f"  [{num}] {symbols.get(action, '')} {action.capitalize()}{info}")
             await play_actions[action]()
 
         else:
@@ -117,27 +137,31 @@ async def execute_step(atv: AppleTV, step: dict[str, Any], num: int) -> bool:
 
 async def run_scenario(atv: AppleTV, name: str) -> bool:
     """Execute un scenario."""
-    scenarios = load_scenarios()
+    try:
+        scenarios = load_scenarios()
+    except ValidationError as e:
+        logger.error(f"Erreur de validation: {e}")
+        return False
 
     if name not in scenarios:
         logger.error(f"Scenario '{name}' non trouve.")
-        print("\nScenarios disponibles:")
+        logger.info("\nScenarios disponibles:")
         for n in sorted(scenarios):
-            print(f"  - {n}")
+            logger.info(f"  - {n}")
         return False
 
     scenario = scenarios[name]
     desc = scenario.get("description", "-")
     steps = scenario.get("steps", [])
 
-    print(f"\n> Execution: {name}")
-    print(f"  {desc}")
-    print(f"  {len(steps)} etape(s)\n")
+    logger.info(f"\n> Execution: {name}")
+    logger.info(f"  {desc}")
+    logger.info(f"  {len(steps)} etape(s)\n")
 
     for i, step in enumerate(steps, 1):
         if not await execute_step(atv, step, i):
-            print(f"\n[X] Echec a l'etape {i}")
+            logger.error(f"\n[X] Echec a l'etape {i}")
             return False
 
-    print(f"\n[OK] Scenario '{name}' termine!")
+    logger.info(f"\n[OK] Scenario '{name}' termine!")
     return True
