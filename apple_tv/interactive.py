@@ -38,7 +38,15 @@ app = typer.Typer(
 
 def run_async(coro):
     """Execute une coroutine de maniere synchrone."""
-    return asyncio.get_event_loop().run_until_complete(coro)
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+
+    if loop is None:
+        return asyncio.run(coro)
+    else:
+        return loop.run_until_complete(coro)
 
 
 # =============================================================================
