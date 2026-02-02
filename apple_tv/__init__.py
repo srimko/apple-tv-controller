@@ -6,6 +6,11 @@ Usage:
     python -m apple_tv --help
 """
 
+# Supprimer le warning urllib3/LibreSSL sur macOS
+# Doit etre AVANT tout import qui pourrait charger urllib3
+import warnings as _warnings
+_warnings.filterwarnings("ignore", message=".*urllib3.*OpenSSL.*")
+
 __version__ = "1.0.0"
 
 from .apps import get_bundle_id, launch_app, list_apps, load_apps_config, sync_apps_config
