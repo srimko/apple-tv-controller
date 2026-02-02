@@ -16,6 +16,7 @@ from .config import (
     logger,
     save_json,
 )
+from .constants import SWIPE_GESTURES
 from .models import ValidationError, validate_scenarios
 
 
@@ -98,15 +99,6 @@ async def execute_step(
         "play_pause": atv.remote_control.play_pause,
     }
 
-    # Swipe gestures: (start_x, start_y, end_x, end_y, duration_ms)
-    # Coordonnees de 0 (haut/gauche) a 1000 (bas/droite)
-    swipe_gestures = {
-        "swipe_up": (500, 700, 500, 300, 300),
-        "swipe_down": (500, 300, 500, 700, 300),
-        "swipe_left": (700, 500, 300, 500, 300),
-        "swipe_right": (300, 500, 700, 500, 300),
-    }
-
     symbols = {
         "up": "^",
         "down": "v",
@@ -153,9 +145,9 @@ async def execute_step(
             if delay > 0:
                 await asyncio.sleep(delay)
 
-        elif action in swipe_gestures:
+        elif action in SWIPE_GESTURES:
             logger.info(f"  [{num}] {symbols.get(action, '')} {action.replace('_', ' ').title()}{info}")
-            start_x, start_y, end_x, end_y, duration = swipe_gestures[action]
+            start_x, start_y, end_x, end_y, duration = SWIPE_GESTURES[action]
             await atv.touch.swipe(start_x, start_y, end_x, end_y, duration)
             if delay > 0:
                 await asyncio.sleep(delay)
