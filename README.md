@@ -107,6 +107,49 @@ python3 apple_tv_power.py up -d "Salon"
 python3 apple_tv_power.py select -d "Salon"
 ```
 
+### Touch (Swipe)
+
+Gestes tactiles sur le touchpad de la telecommande Siri Remote.
+
+| Commande | Description |
+|----------|-------------|
+| `swipe_up` | Glissement vers le haut |
+| `swipe_down` | Glissement vers le bas |
+| `swipe_left` | Glissement vers la gauche |
+| `swipe_right` | Glissement vers la droite |
+
+**Note :** Ces commandes ne sont disponibles que dans les scenarios, pas en ligne de commande directe.
+
+**Exemple 1 : Defiler dans une liste**
+
+```json
+{
+  "scroll_list": {
+    "description": "Faire defiler une liste vers le bas",
+    "steps": [
+      {"action": "swipe_down", "repeat": 5},
+      {"action": "select"}
+    ]
+  }
+}
+```
+
+**Exemple 2 : Navigation horizontale (caroussel)**
+
+```json
+{
+  "browse_carousel": {
+    "description": "Parcourir un caroussel horizontal",
+    "steps": [
+      {"action": "swipe_right", "repeat": 3},
+      {"action": "wait", "seconds": 1},
+      {"action": "swipe_left"},
+      {"action": "select"}
+    ]
+  }
+}
+```
+
 ### Volume
 
 | Commande | Description |
@@ -183,9 +226,33 @@ python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"
 |--------|------------|-------------|
 | `launch` | `app` | Lancer une application |
 | `wait` | `seconds` | Attendre N secondes |
-| `up/down/left/right` | `repeat` (optionnel) | Navigation |
-| `select/menu/home` | `repeat` (optionnel) | Boutons |
-| `play/pause/play_pause` | - | Controle lecture |
+| `up/down/left/right` | `repeat`, `delay` | Navigation (boutons) |
+| `select/menu/home` | `repeat`, `delay` | Boutons |
+| `play/pause/play_pause` | `delay` | Controle lecture |
+| `swipe_up/swipe_down` | `repeat`, `delay` | Glissement vertical (touchpad) |
+| `swipe_left/swipe_right` | `repeat`, `delay` | Glissement horizontal (touchpad) |
+
+**Parametres optionnels :**
+
+| Parametre | Defaut | Description |
+|-----------|--------|-------------|
+| `repeat` | `1` | Nombre de repetitions de l'action |
+| `delay` | `0.5` | Pause apres chaque action (en secondes) |
+
+**Exemple avec delay personnalise :**
+
+```json
+{
+  "navigation_lente": {
+    "description": "Navigation avec delai plus long",
+    "steps": [
+      {"action": "down", "repeat": 3, "delay": 1.0},
+      {"action": "right", "delay": 0.8},
+      {"action": "select"}
+    ]
+  }
+}
+```
 
 ### Planification
 

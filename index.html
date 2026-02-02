@@ -204,6 +204,7 @@
     <a href="#alimentation">Alimentation</a>
     <a href="#lecture">Lecture</a>
     <a href="#telecommande">Telecommande</a>
+    <a href="#touch">Touch (Swipe)</a>
     <a href="#volume">Volume</a>
     <a href="#applications">Applications</a>
     <a href="#scenarios">Scenarios</a>
@@ -317,6 +318,46 @@ python3 apple_tv_power.py select -d "Salon"</code></pre>
 <div class="cmd"><code>python3 apple_tv_power.py up -d "Salon"</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>python3 apple_tv_power.py select -d "Salon"</code><button class="copy-btn">Copier</button></div>
 
+<h3 id="touch">Touch (Swipe)</h3>
+
+<p>Gestes tactiles sur le touchpad de la telecommande Siri Remote.</p>
+
+<table>
+    <tr><th>Action</th><th>Description</th></tr>
+    <tr><td><code>swipe_up</code></td><td>Glissement vers le haut</td></tr>
+    <tr><td><code>swipe_down</code></td><td>Glissement vers le bas</td></tr>
+    <tr><td><code>swipe_left</code></td><td>Glissement vers la gauche</td></tr>
+    <tr><td><code>swipe_right</code></td><td>Glissement vers la droite</td></tr>
+</table>
+
+<p><strong>Note :</strong> Ces commandes ne sont disponibles que dans les scenarios, pas en ligne de commande directe.</p>
+
+<p><strong>Exemple 1 : Defiler dans une liste</strong></p>
+
+<pre><code class="language-json">{
+  "scroll_list": {
+    "description": "Faire defiler une liste vers le bas",
+    "steps": [
+      {"action": "swipe_down", "repeat": 5},
+      {"action": "select"}
+    ]
+  }
+}</code></pre>
+
+<p><strong>Exemple 2 : Navigation horizontale (caroussel)</strong></p>
+
+<pre><code class="language-json">{
+  "browse_carousel": {
+    "description": "Parcourir un caroussel horizontal",
+    "steps": [
+      {"action": "swipe_right", "repeat": 3},
+      {"action": "wait", "seconds": 1},
+      {"action": "swipe_left"},
+      {"action": "select"}
+    ]
+  }
+}</code></pre>
+
 <h3 id="volume">Volume</h3>
 
 <table class="cmd-table">
@@ -384,10 +425,33 @@ python3 apple_tv_power.py select -d "Salon"</code></pre>
     <tr><th>Action</th><th>Parametres</th><th>Description</th></tr>
     <tr><td><code>launch</code></td><td><code>app</code></td><td>Lancer une application</td></tr>
     <tr><td><code>wait</code></td><td><code>seconds</code></td><td>Attendre N secondes</td></tr>
-    <tr><td><code>up/down/left/right</code></td><td><code>repeat</code> (optionnel)</td><td>Navigation</td></tr>
-    <tr><td><code>select/menu/home</code></td><td><code>repeat</code> (optionnel)</td><td>Boutons</td></tr>
-    <tr><td><code>play/pause/play_pause</code></td><td>-</td><td>Controle lecture</td></tr>
+    <tr><td><code>up/down/left/right</code></td><td><code>repeat</code>, <code>delay</code></td><td>Navigation (boutons)</td></tr>
+    <tr><td><code>select/menu/home</code></td><td><code>repeat</code>, <code>delay</code></td><td>Boutons</td></tr>
+    <tr><td><code>play/pause/play_pause</code></td><td><code>delay</code></td><td>Controle lecture</td></tr>
+    <tr><td><code>swipe_up/swipe_down</code></td><td><code>repeat</code>, <code>delay</code></td><td>Glissement vertical (touchpad)</td></tr>
+    <tr><td><code>swipe_left/swipe_right</code></td><td><code>repeat</code>, <code>delay</code></td><td>Glissement horizontal (touchpad)</td></tr>
 </table>
+
+<p><strong>Parametres optionnels :</strong></p>
+
+<table>
+    <tr><th>Parametre</th><th>Defaut</th><th>Description</th></tr>
+    <tr><td><code>repeat</code></td><td><code>1</code></td><td>Nombre de repetitions de l'action</td></tr>
+    <tr><td><code>delay</code></td><td><code>0.5</code></td><td>Pause apres chaque action (en secondes)</td></tr>
+</table>
+
+<p><strong>Exemple avec delay personnalise :</strong></p>
+
+<pre><code class="language-json">{
+  "navigation_lente": {
+    "description": "Navigation avec delai plus long",
+    "steps": [
+      {"action": "down", "repeat": 3, "delay": 1.0},
+      {"action": "right", "delay": 0.8},
+      {"action": "select"}
+    ]
+  }
+}</code></pre>
 
 <h3 id="planification">Planification</h3>
 

@@ -41,7 +41,7 @@ from .controls import (
     volume_up,
 )
 from .exceptions import AppleTVError, DeviceNotFoundError, FeatureNotAvailableError
-from .models import ValidationError, validate_scenarios, validate_schedules
+from .models import DEFAULT_ACTION_DELAY, ValidationError, validate_scenarios, validate_schedules
 from .scenarios import load_scenarios, run_scenario
 from .scheduler import ScheduleEntry, load_schedules, run_scheduler, save_schedules
 from .server import run_server
@@ -60,6 +60,7 @@ __all__ = [
     "FeatureNotAvailableError",
     "ValidationError",
     # Validation
+    "DEFAULT_ACTION_DELAY",
     "validate_scenarios",
     "validate_schedules",
     # Connection

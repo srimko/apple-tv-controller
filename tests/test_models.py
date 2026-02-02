@@ -3,6 +3,7 @@
 import pytest
 
 from apple_tv.models import (
+    DEFAULT_ACTION_DELAY,
     ScenarioStep,
     Scenario,
     ValidationError,
@@ -71,6 +72,32 @@ class TestScenarioStep:
 
         assert "repeat" in str(exc_info.value)
 
+    def test_default_delay(self):
+        """Delay par defaut est 0.5 seconde."""
+        step = ScenarioStep(action="select")
+
+        assert step.delay == DEFAULT_ACTION_DELAY
+        assert step.delay == 0.5
+
+    def test_custom_delay(self):
+        """Delay personnalise."""
+        step = ScenarioStep(action="down", delay=1.0)
+
+        assert step.delay == 1.0
+
+    def test_negative_delay_raises(self):
+        """delay negatif leve ValidationError."""
+        with pytest.raises(ValidationError) as exc_info:
+            ScenarioStep(action="select", delay=-0.5)
+
+        assert "delay" in str(exc_info.value)
+
+    def test_zero_delay_is_valid(self):
+        """delay=0 est valide (pas de pause)."""
+        step = ScenarioStep(action="select", delay=0)
+
+        assert step.delay == 0
+
     def test_from_dict(self):
         """Creation depuis un dictionnaire."""
         data = {"action": "down", "repeat": 2}
@@ -79,6 +106,16 @@ class TestScenarioStep:
 
         assert step.action == "down"
         assert step.repeat == 2
+        assert step.delay == DEFAULT_ACTION_DELAY
+
+    def test_from_dict_with_delay(self):
+        """Creation depuis un dictionnaire avec delay."""
+        data = {"action": "up", "delay": 1.5}
+
+        step = ScenarioStep.from_dict(data)
+
+        assert step.action == "up"
+        assert step.delay == 1.5
 
     def test_all_valid_actions(self):
         """Toutes les actions valides sont acceptees."""
@@ -87,6 +124,8 @@ class TestScenarioStep:
                 step = ScenarioStep(action=action, app="test")
             elif action == "wait":
                 step = ScenarioStep(action=action, seconds=1)
+            elif action == "scenario":
+                step = ScenarioStep(action=action, name="test_scenario")
             else:
                 step = ScenarioStep(action=action)
 

@@ -7,15 +7,20 @@ from typing import Any, Literal, Optional
 
 # Actions valides pour les scenarios
 VALID_ACTIONS = frozenset({
-    "launch", "wait",
+    "launch", "wait", "scenario",
     "up", "down", "left", "right",
-    "select", "menu", "home",
+    "select", "menu", "home", "home_double",
     "play", "pause", "play_pause",
+    "swipe_up", "swipe_down", "swipe_left", "swipe_right",
 })
 
 
 class ValidationError(Exception):
     """Erreur de validation des donnees."""
+
+
+# Delai par defaut entre les actions de navigation (en secondes)
+DEFAULT_ACTION_DELAY = 0.5
 
 
 @dataclass
@@ -25,7 +30,9 @@ class ScenarioStep:
     action: str
     app: Optional[str] = None
     seconds: Optional[float] = None
+    name: Optional[str] = None  # Pour l'action "scenario"
     repeat: int = 1
+    delay: float = DEFAULT_ACTION_DELAY
 
     def __post_init__(self) -> None:
         """Valide les champs apres initialisation."""
@@ -38,6 +45,9 @@ class ScenarioStep:
         if self.action == "launch" and not self.app:
             raise ValidationError("L'action 'launch' requiert le parametre 'app'")
 
+        if self.action == "scenario" and not self.name:
+            raise ValidationError("L'action 'scenario' requiert le parametre 'name'")
+
         if self.action == "wait" and self.seconds is None:
             raise ValidationError("L'action 'wait' requiert le parametre 'seconds'")
 
@@ -47,6 +57,9 @@ class ScenarioStep:
         if self.repeat < 1:
             raise ValidationError(f"'repeat' doit etre >= 1, recu: {self.repeat}")
 
+        if self.delay < 0:
+            raise ValidationError(f"'delay' doit etre >= 0, recu: {self.delay}")
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ScenarioStep:
         """Cree une etape depuis un dictionnaire."""
@@ -54,7 +67,9 @@ class ScenarioStep:
             action=data.get("action", ""),
             app=data.get("app"),
             seconds=data.get("seconds"),
+            name=data.get("name"),
             repeat=data.get("repeat", 1),
+            delay=data.get("delay", DEFAULT_ACTION_DELAY),
         )
 
 

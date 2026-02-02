@@ -32,7 +32,7 @@ SCHEDULER_INTERVAL = 60  # Intervalle de verification du scheduler
 
 # Port serveur HTTP
 SERVER_PORT = 8888
-HTTP_REQUEST_TIMEOUT = 60  # Timeout pour les requetes HTTP
+HTTP_REQUEST_TIMEOUT = 120  # Timeout pour les requetes HTTP (2 minutes)
 
 # Configuration par defaut des applications
 DEFAULT_APPS_CONFIG: dict[str, str] = {
