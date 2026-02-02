@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple TV Controller</title>
-    <!-- PrismJS Theme -->
+    <title>Apple TV Controller - Documentation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
         * { box-sizing: border-box; }
@@ -15,22 +14,21 @@
             line-height: 1.6;
             background: #f5f5f5;
         }
-        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
-            width: 220px;
+            width: 240px;
             height: 100vh;
-            background: #2d2d2d;
+            background: #1a1a2e;
             padding: 20px 0;
             overflow-y: auto;
         }
         .sidebar h3 {
-            color: #fff;
-            font-size: 14px;
-            padding: 0 15px;
-            margin: 15px 0 5px 0;
+            color: #888;
+            font-size: 11px;
+            padding: 0 20px;
+            margin: 20px 0 8px 0;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -38,41 +36,65 @@
             display: block;
             color: #ccc;
             text-decoration: none;
-            padding: 8px 15px;
+            padding: 8px 20px;
             font-size: 14px;
+            border-left: 3px solid transparent;
         }
         .sidebar a:hover {
-            background: #444;
+            background: #252542;
             color: #fff;
+            border-left-color: #667eea;
         }
         .sidebar .title {
             color: #fff;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            padding: 10px 15px 20px;
-            border-bottom: 1px solid #444;
+            padding: 15px 20px 25px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 10px;
         }
-        /* Main content */
+        .sidebar .title span {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            font-weight: normal;
+            margin-top: 4px;
+        }
         .main {
-            margin-left: 220px;
-            padding: 30px 40px;
+            margin-left: 240px;
+            padding: 40px 50px;
             max-width: 900px;
         }
-        h1, h2, h3 { color: #333; }
-        h1 { border-bottom: 2px solid #333; padding-bottom: 10px; }
-        h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 40px; }
+        h1 {
+            color: #1a1a2e;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        h2 {
+            color: #1a1a2e;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            margin-top: 50px;
+        }
+        h3 {
+            color: #333;
+            margin-top: 35px;
+        }
         code {
             background: #e8e8e8;
             padding: 2px 6px;
             border-radius: 3px;
-            font-family: monospace;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.9em;
         }
         pre {
             background: #2d2d2d;
             color: #f8f8f2;
-            padding: 15px;
-            border-radius: 5px;
+            padding: 15px 20px;
+            border-radius: 8px;
             overflow-x: auto;
+            position: relative;
         }
         pre code {
             background: none;
@@ -85,30 +107,39 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 12px;
             text-align: left;
         }
-        th { background: #e8e8e8; }
+        th { background: #f0f0f0; font-weight: 600; }
         tr:nth-child(even) { background: #fafafa; }
-        hr { border: none; border-top: 1px solid #ddd; margin: 30px 0; }
-        /* Table copy button */
-        .copy-icon {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            opacity: 0.4;
-            transition: opacity 0.2s;
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
+        hr { border: none; border-top: 1px solid #ddd; margin: 40px 0; }
+        blockquote {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+            padding: 12px 20px;
+            border-radius: 0 5px 5px 0;
         }
-        .copy-icon:hover { opacity: 1; }
-        .copy-icon svg { display: block; }
-        .copy-icon.copied svg { stroke: #28a745; }
-        .cmd-table td:last-child { position: relative; padding-right: 35px; }
-        /* Command lines with copy button */
+        blockquote.info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+        blockquote.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        .step-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
         .cmd {
             display: flex;
             align-items: center;
@@ -118,15 +149,15 @@
             border-bottom: 1px solid #444;
         }
         .cmd + .cmd { border-radius: 0; }
-        .cmd:not(.cmd + .cmd) { border-radius: 3px 3px 0 0; }
-        .cmd:not(:has(+ .cmd)) { border-radius: 0 0 3px 3px; border-bottom: none; }
-        .cmd:not(.cmd + .cmd):not(:has(+ .cmd)) { border-radius: 3px; }
+        .cmd:not(.cmd + .cmd) { border-radius: 8px 8px 0 0; }
+        .cmd:not(:has(+ .cmd)) { border-radius: 0 0 8px 8px; border-bottom: none; }
+        .cmd:not(.cmd + .cmd):not(:has(+ .cmd)) { border-radius: 8px; }
         .cmd code {
             flex: 1;
             background: none;
             color: #f8f8f2;
-            padding: 10px 15px;
-            font-family: monospace;
+            padding: 12px 15px;
+            font-family: 'SF Mono', Monaco, monospace;
             font-size: 14px;
         }
         .cmd .copy-btn {
@@ -138,83 +169,76 @@
             font-size: 12px;
             cursor: pointer;
             opacity: 0.5;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
+            border-radius: 4px;
         }
-        .cmd:hover .copy-btn {
-            opacity: 1;
+        .cmd:hover .copy-btn { opacity: 1; }
+        .cmd .copy-btn:hover { background: #777; }
+        .cmd .copy-btn.copied { background: #28a745; opacity: 1; }
+        .scenario-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
         }
-        .cmd .copy-btn:hover {
-            background: #777;
+        .scenario-card h4 {
+            margin-top: 0;
+            color: #1a1a2e;
         }
-        .cmd .copy-btn.copied {
-            background: #28a745;
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 20px 0;
         }
-        /* Quick Start block */
-        .quickstart-block {
-            position: relative;
-            margin: 15px 0;
+        .toc h4 {
+            margin-top: 0;
+            color: #1a1a2e;
         }
-        .quickstart-block pre {
+        .toc ul {
             margin: 0;
-            padding-right: 80px;
+            padding-left: 20px;
         }
-        .copy-block-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #555;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            border-radius: 3px;
-            opacity: 0.7;
-            transition: opacity 0.2s, background 0.2s;
+        .toc li {
+            margin: 8px 0;
         }
-        .quickstart-block:hover .copy-block-btn {
-            opacity: 1;
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
         }
-        .copy-block-btn:hover {
-            background: #777;
+        .toc a:hover {
+            text-decoration: underline;
         }
-        .copy-block-btn.copied {
-            background: #28a745;
-        }
-        /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .sidebar { display: none; }
             .main { margin-left: 0; padding: 20px; }
-            .copy-btn { opacity: 1; }
-            .copy-block-btn { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
 <nav class="sidebar">
-    <div class="title">Apple TV Controller</div>
+    <div class="title">
+        Apple TV Controller
+        <span>Documentation v1.0</span>
+    </div>
 
     <h3>Demarrage</h3>
-    <a href="#quickstart">Quick Start</a>
-    <a href="#installation">Installation</a>
-    <a href="#configuration">Configuration</a>
+    <a href="#demarrage">Demarrage rapide</a>
+    <a href="#tutoriel">Premier scenario</a>
 
-    <h3>Commandes</h3>
-    <a href="#alimentation">Alimentation</a>
-    <a href="#lecture">Lecture</a>
-    <a href="#telecommande">Telecommande</a>
-    <a href="#touch">Touch (Swipe)</a>
-    <a href="#volume">Volume</a>
-    <a href="#applications">Applications</a>
-    <a href="#scenarios">Scenarios</a>
-    <a href="#planification">Planification</a>
-    <a href="#serveur-http">Serveur HTTP</a>
+    <h3>Guides</h3>
+    <a href="#scenarios-exemples">Scenarios prets a l'emploi</a>
+    <a href="#ios-shortcuts">Integration iOS</a>
 
     <h3>Reference</h3>
-    <a href="#options">Options globales</a>
-    <a href="#fichiers">Fichiers</a>
-    <a href="#exemples">Exemples</a>
+    <a href="#commandes">Commandes</a>
+    <a href="#actions">Actions de scenario</a>
+    <a href="#fichiers">Fichiers config</a>
+
+    <h3>Aide</h3>
     <a href="#depannage">Depannage</a>
 </nav>
 
@@ -222,460 +246,434 @@
 
 <h1>Apple TV Controller</h1>
 
-<p>Script Python pour controler une Apple TV via le reseau local en utilisant la bibliotheque <a href="https://pyatv.dev/">pyatv</a>.</p>
+<p>Controlez votre Apple TV depuis le terminal ou via des raccourcis iOS. Base sur <a href="https://pyatv.dev/">pyatv</a>.</p>
 
-<h2 id="quickstart">Quick Start</h2>
-
-<p>Controlez votre Apple TV en 4 commandes. Remplacez "Salon" par le nom de votre Apple TV (visible dans Reglages > General > Nom).</p>
-
-<div class="quickstart-block">
-<pre><code class="language-bash"># Installer les dependances
-pip install pyatv aiohttp
-
-# Trouver les Apple TV sur votre reseau
-python3 apple_tv_power.py scan
-
-# Appairer (un code PIN s'affiche sur la TV)
-python3 apple_tv_power.py pair -d "Salon"
-
-# Tester : appuie sur le bouton "OK"
-python3 apple_tv_power.py select -d "Salon"</code></pre>
-<button class="copy-block-btn">Copier</button>
+<div class="toc">
+    <h4>Sur cette page</h4>
+    <ul>
+        <li><a href="#demarrage">Demarrage rapide (5 min)</a></li>
+        <li><a href="#tutoriel">Tutoriel : Votre premier scenario</a></li>
+        <li><a href="#scenarios-exemples">Scenarios prets a l'emploi</a></li>
+        <li><a href="#ios-shortcuts">Integration Raccourcis iOS</a></li>
+        <li><a href="#commandes">Reference des commandes</a></li>
+        <li><a href="#depannage">Depannage</a></li>
+    </ul>
 </div>
 
 <hr>
 
-<h2 id="installation">Installation</h2>
+<h2 id="demarrage">Demarrage rapide (5 min)</h2>
 
+<h3>Prerequis</h3>
+
+<ul>
+    <li>Python 3.9+</li>
+    <li>Apple TV sur le meme reseau Wi-Fi que votre Mac</li>
+    <li>Nom de votre Apple TV (visible dans <strong>Reglages > General > Informations > Nom</strong>)</li>
+</ul>
+
+<h3><span class="step-number">1</span> Installation</h3>
+
+<div class="cmd"><code>git clone https://github.com/username/apple-tv-controller.git</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>cd apple-tv-controller</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>pip install pyatv aiohttp</code><button class="copy-btn">Copier</button></div>
 
-<h2 id="configuration">Configuration initiale</h2>
-
-<h3>1. Scanner les appareils disponibles</h3>
+<h3><span class="step-number">2</span> Decouvrir votre Apple TV</h3>
 
 <div class="cmd"><code>python3 apple_tv_power.py scan</code><button class="copy-btn">Copier</button></div>
 
-<p>Affiche tous les appareils Apple TV/AirPlay sur le reseau avec leur nom, adresse IP et protocoles supportes.</p>
+<p>Resultat attendu :</p>
+<pre><code>[0] Salon
+    Adresse: 192.168.1.91
+    Protocoles: AirPlay, Companion, RAOP</code></pre>
 
-<h3>2. Appairer avec une Apple TV</h3>
+<blockquote>
+    <strong>Pas de resultat ?</strong> Voir <a href="#aucune-apple-tv">Depannage > Aucune Apple TV trouvee</a>
+</blockquote>
+
+<h3><span class="step-number">3</span> Appairer</h3>
 
 <div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
 
-<p>Un code PIN s'affiche sur l'ecran de l'Apple TV. Entrez-le dans le terminal pour valider l'appairage.</p>
+<ol>
+    <li>Un code PIN a 4 chiffres s'affiche sur votre TV</li>
+    <li>Entrez-le dans le terminal</li>
+    <li>Les credentials sont sauvegardes automatiquement</li>
+</ol>
 
-<p>Les credentials sont sauvegardes dans <code>credentials.json</code> et reutilises automatiquement.</p>
+<h3><span class="step-number">4</span> Tester</h3>
+
+<div class="cmd"><code>python3 apple_tv_power.py select -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>python3 apple_tv_power.py up -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<blockquote class="success">
+    <strong>Vous etes pret !</strong> Continuez avec le tutoriel ci-dessous.
+</blockquote>
 
 <hr>
 
-<h2>Commandes disponibles</h2>
+<h2 id="tutoriel">Tutoriel : Votre premier scenario</h2>
 
-<h3>Aide</h3>
+<p>Un scenario est une sequence d'actions automatisees. Exemple : lancer Netflix et selectionner un profil.</p>
 
-<div class="cmd"><code>python3 apple_tv_power.py --help</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py &lt;commande&gt; --help</code><button class="copy-btn">Copier</button></div>
-
-<h3 id="alimentation">Alimentation</h3>
-
-<table class="cmd-table">
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>on</code></td><td>Allumer l'Apple TV <button class="copy-icon" data-cmd="on"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>off</code></td><td>Eteindre l'Apple TV (mise en veille) <button class="copy-icon" data-cmd="off"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>status</code></td><td>Afficher l'etat d'alimentation <button class="copy-icon" data-cmd="status"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-</table>
-
-<div class="cmd"><code>python3 apple_tv_power.py on -d "Salon"</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py off -d "Salon"</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py status -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<h3 id="lecture">Lecture</h3>
-
-<table class="cmd-table">
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>play</code></td><td>Lancer la lecture <button class="copy-icon" data-cmd="play"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>pause</code></td><td>Mettre en pause <button class="copy-icon" data-cmd="pause"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>play_pause</code></td><td>Toggle lecture/pause <button class="copy-icon" data-cmd="play_pause"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>stop</code></td><td>Arreter la lecture <button class="copy-icon" data-cmd="stop"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>next</code></td><td>Piste/chapitre suivant <button class="copy-icon" data-cmd="next"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>previous</code></td><td>Piste/chapitre precedent <button class="copy-icon" data-cmd="previous"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-</table>
-
-<div class="cmd"><code>python3 apple_tv_power.py play -d "Salon"</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py pause -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<h3 id="telecommande">Telecommande</h3>
-
-<table class="cmd-table">
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>up</code></td><td>Fleche haut <button class="copy-icon" data-cmd="up"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>down</code></td><td>Fleche bas <button class="copy-icon" data-cmd="down"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>left</code></td><td>Fleche gauche <button class="copy-icon" data-cmd="left"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>right</code></td><td>Fleche droite <button class="copy-icon" data-cmd="right"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>select</code></td><td>Bouton OK/Selection <button class="copy-icon" data-cmd="select"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>menu</code></td><td>Bouton Menu (retour) <button class="copy-icon" data-cmd="menu"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>home</code></td><td>Bouton Home (accueil) <button class="copy-icon" data-cmd="home"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-</table>
-
-<div class="cmd"><code>python3 apple_tv_power.py up -d "Salon"</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py select -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<h3 id="touch">Touch (Swipe)</h3>
-
-<p>Gestes tactiles sur le touchpad de la telecommande Siri Remote.</p>
-
-<table>
-    <tr><th>Action</th><th>Description</th></tr>
-    <tr><td><code>swipe_up</code></td><td>Glissement vers le haut</td></tr>
-    <tr><td><code>swipe_down</code></td><td>Glissement vers le bas</td></tr>
-    <tr><td><code>swipe_left</code></td><td>Glissement vers la gauche</td></tr>
-    <tr><td><code>swipe_right</code></td><td>Glissement vers la droite</td></tr>
-</table>
-
-<p><strong>Note :</strong> Ces commandes ne sont disponibles que dans les scenarios, pas en ligne de commande directe.</p>
-
-<p><strong>Exemple 1 : Defiler dans une liste</strong></p>
-
-<pre><code class="language-json">{
-  "scroll_list": {
-    "description": "Faire defiler une liste vers le bas",
-    "steps": [
-      {"action": "swipe_down", "repeat": 5},
-      {"action": "select"}
-    ]
-  }
-}</code></pre>
-
-<p><strong>Exemple 2 : Navigation horizontale (caroussel)</strong></p>
-
-<pre><code class="language-json">{
-  "browse_carousel": {
-    "description": "Parcourir un caroussel horizontal",
-    "steps": [
-      {"action": "swipe_right", "repeat": 3},
-      {"action": "wait", "seconds": 1},
-      {"action": "swipe_left"},
-      {"action": "select"}
-    ]
-  }
-}</code></pre>
-
-<h3 id="volume">Volume</h3>
-
-<table class="cmd-table">
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>volume_up</code></td><td>Augmenter le volume <button class="copy-icon" data-cmd="volume_up"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>volume_down</code></td><td>Baisser le volume <button class="copy-icon" data-cmd="volume_down"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>volume</code></td><td>Afficher le volume actuel <button class="copy-icon" data-cmd="volume"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>volume &lt;0-100&gt;</code></td><td>Regler le volume</td></tr>
-</table>
-
-<div class="cmd"><code>python3 apple_tv_power.py volume -d "Salon"</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py volume 50 -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<h3 id="applications">Applications</h3>
-
-<table class="cmd-table">
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>apps</code></td><td>Lister les applications installees <button class="copy-icon" data-cmd="apps"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>apps_config</code></td><td>Afficher la configuration des alias <button class="copy-icon" data-cmd="apps_config"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>apps_sync</code></td><td>Synchroniser apps.json avec l'Apple TV <button class="copy-icon" data-cmd="apps_sync"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>launch &lt;app&gt;</code></td><td>Lancer une application</td></tr>
-</table>
-
-<div class="cmd"><code>python3 apple_tv_power.py apps -d "Salon"</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py apps_config</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py launch netflix -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<h4>Configuration des applications (apps.json)</h4>
-
-<pre><code class="language-json">{
-  "netflix": "com.netflix.Netflix",
-  "youtube": "com.google.ios.youtube",
-  "disney": "com.disney.disneyplus"
-}</code></pre>
-
-<h3 id="scenarios">Scenarios</h3>
-
-<p>Les scenarios permettent d'automatiser des sequences d'actions.</p>
-
-<table class="cmd-table">
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>scenarios</code></td><td>Lister les scenarios disponibles <button class="copy-icon" data-cmd="scenarios"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></td></tr>
-    <tr><td><code>scenario &lt;nom&gt;</code></td><td>Executer un scenario</td></tr>
-</table>
+<h3><span class="step-number">1</span> Voir les scenarios existants</h3>
 
 <div class="cmd"><code>python3 apple_tv_power.py scenarios</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"</code><button class="copy-btn">Copier</button></div>
 
-<h4>Configuration des scenarios (scenarios.json)</h4>
+<h3><span class="step-number">2</span> Ajouter votre scenario</h3>
+
+<p>Editez <code>scenarios.json</code> :</p>
 
 <pre><code class="language-json">{
   "netflix_profil1": {
-    "description": "Lancer Netflix et selectionner le premier profil",
+    "description": "Lancer Netflix et selectionner le 1er profil",
     "steps": [
       {"action": "launch", "app": "netflix"},
-      {"action": "wait", "seconds": 3},
+      {"action": "wait", "seconds": 4},
       {"action": "select"}
     ]
   }
 }</code></pre>
 
-<p><strong>Actions disponibles :</strong></p>
+<h3><span class="step-number">3</span> Executer</h3>
+
+<div class="cmd"><code>python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3><span class="step-number">4</span> Ajuster le timing</h3>
+
+<p>Si ca va trop vite, augmentez le <code>wait</code> ou ajoutez un <code>delay</code> :</p>
+
+<pre><code class="language-json">{
+  "netflix_profil1": {
+    "description": "Lancer Netflix (version lente)",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 5},
+      {"action": "down", "delay": 1.0},
+      {"action": "select"}
+    ]
+  }
+}</code></pre>
+
+<h3>Comprendre les parametres</h3>
+
+<table>
+    <tr><th>Parametre</th><th>Description</th><th>Defaut</th></tr>
+    <tr><td><code>action</code></td><td>L'action a executer (obligatoire)</td><td>-</td></tr>
+    <tr><td><code>wait</code> + <code>seconds</code></td><td>Pause fixe en secondes</td><td>-</td></tr>
+    <tr><td><code>delay</code></td><td>Pause apres l'action</td><td>0.5s</td></tr>
+    <tr><td><code>repeat</code></td><td>Nombre de repetitions</td><td>1</td></tr>
+</table>
+
+<hr>
+
+<h2 id="scenarios-exemples">Scenarios prets a l'emploi</h2>
+
+<p>Copiez ces scenarios dans votre <code>scenarios.json</code>.</p>
+
+<div class="scenario-card">
+    <h4>Netflix - Selectionner un profil</h4>
+    <pre><code class="language-json">{
+  "netflix_profil1": {
+    "description": "Netflix - Premier profil",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 4},
+      {"action": "select"}
+    ]
+  },
+  "netflix_profil2": {
+    "description": "Netflix - Deuxieme profil",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 4},
+      {"action": "right"},
+      {"action": "select"}
+    ]
+  }
+}</code></pre>
+</div>
+
+<div class="scenario-card">
+    <h4>YouTube - Accueil</h4>
+    <pre><code class="language-json">{
+  "youtube_home": {
+    "description": "Ouvrir YouTube sur l'accueil",
+    "steps": [
+      {"action": "launch", "app": "youtube"},
+      {"action": "wait", "seconds": 3},
+      {"action": "menu"},
+      {"action": "menu"}
+    ]
+  }
+}</code></pre>
+</div>
+
+<div class="scenario-card">
+    <h4>Fermer toutes les apps</h4>
+    <pre><code class="language-json">{
+  "close_apps": {
+    "description": "Fermer les apps en arriere-plan",
+    "steps": [
+      {"action": "home_double"},
+      {"action": "wait", "seconds": 1},
+      {"action": "swipe_up", "repeat": 5, "delay": 0.3}
+    ]
+  }
+}</code></pre>
+</div>
+
+<div class="scenario-card">
+    <h4>Routine du soir</h4>
+    <pre><code class="language-json">{
+  "bonne_nuit": {
+    "description": "Fermer les apps et eteindre",
+    "steps": [
+      {"action": "scenario", "name": "close_apps"},
+      {"action": "wait", "seconds": 1},
+      {"action": "home"}
+    ]
+  }
+}</code></pre>
+    <blockquote class="info">
+        L'action <code>scenario</code> permet d'inclure un scenario dans un autre.
+    </blockquote>
+</div>
+
+<hr>
+
+<h2 id="ios-shortcuts">Integration Raccourcis iOS</h2>
+
+<p>Declenchez vos scenarios depuis votre iPhone avec l'app Raccourcis.</p>
+
+<h3><span class="step-number">1</span> Lancer le serveur HTTP</h3>
+
+<p>Sur votre Mac (laissez le terminal ouvert) :</p>
+
+<div class="cmd"><code>python3 apple_tv_power.py server</code><button class="copy-btn">Copier</button></div>
+
+<h3><span class="step-number">2</span> Trouver l'IP de votre Mac</h3>
+
+<div class="cmd"><code>ipconfig getifaddr en0</code><button class="copy-btn">Copier</button></div>
+
+<p>Exemple : <code>192.168.1.50</code></p>
+
+<h3><span class="step-number">3</span> Tester avec curl</h3>
+
+<div class="cmd"><code>curl http://192.168.1.50:8888/health</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>curl http://192.168.1.50:8888/scenarios</code><button class="copy-btn">Copier</button></div>
+<div class="cmd"><code>curl -X POST "http://192.168.1.50:8888/scenario/netflix_profil1?device=Salon"</code><button class="copy-btn">Copier</button></div>
+
+<h3><span class="step-number">4</span> Creer le raccourci iOS</h3>
+
+<ol>
+    <li>Ouvrir l'app <strong>Raccourcis</strong> sur iPhone</li>
+    <li>Appuyer sur <strong>+</strong> (nouveau raccourci)</li>
+    <li><strong>Ajouter une action</strong> > chercher <strong>"Obtenir le contenu de l'URL"</strong></li>
+    <li>Configurer :
+        <ul>
+            <li><strong>URL</strong> : <code>http://192.168.1.50:8888/scenario/netflix_profil1?device=Salon</code></li>
+            <li>Appuyer sur <strong>Afficher plus</strong></li>
+            <li><strong>Methode</strong> : <code>POST</code></li>
+        </ul>
+    </li>
+    <li>Renommer le raccourci (ex: "Netflix Salon")</li>
+    <li>Optionnel : <strong>Ajouter a l'ecran d'accueil</strong></li>
+</ol>
+
+<h3><span class="step-number">5</span> Utiliser</h3>
+
+<ul>
+    <li>Tap sur l'icone de l'ecran d'accueil</li>
+    <li>Ou dire <strong>"Dis Siri, Netflix Salon"</strong></li>
+</ul>
+
+<h3>Endpoints disponibles</h3>
+
+<table>
+    <tr><th>Methode</th><th>URL</th><th>Description</th></tr>
+    <tr><td>GET</td><td><code>/health</code></td><td>Verifier que le serveur tourne</td></tr>
+    <tr><td>GET</td><td><code>/scenarios</code></td><td>Lister les scenarios</td></tr>
+    <tr><td>POST</td><td><code>/scenario/{nom}?device=Salon</code></td><td>Executer un scenario</td></tr>
+    <tr><td>POST</td><td><code>/shutdown</code></td><td>Arreter le serveur</td></tr>
+</table>
+
+<hr>
+
+<h2 id="commandes">Reference des commandes</h2>
+
+<h3>Telecommande</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>up</code>, <code>down</code>, <code>left</code>, <code>right</code></td><td>Navigation</td></tr>
+    <tr><td><code>select</code></td><td>Bouton OK</td></tr>
+    <tr><td><code>menu</code></td><td>Retour</td></tr>
+    <tr><td><code>home</code></td><td>Ecran d'accueil</td></tr>
+    <tr><td><code>home_double</code></td><td>App Switcher (double home)</td></tr>
+</table>
+
+<h3>Touch (Swipe)</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>swipe_up</code>, <code>swipe_down</code></td><td>Glissement vertical</td></tr>
+    <tr><td><code>swipe_left</code>, <code>swipe_right</code></td><td>Glissement horizontal</td></tr>
+</table>
+
+<blockquote class="info">
+    Les swipes sont disponibles uniquement dans les scenarios.
+</blockquote>
+
+<h3>Lecture</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>play</code>, <code>pause</code>, <code>play_pause</code></td><td>Controle lecture</td></tr>
+    <tr><td><code>stop</code></td><td>Arreter</td></tr>
+    <tr><td><code>next</code>, <code>previous</code></td><td>Piste suivante/precedente</td></tr>
+</table>
+
+<h3>Alimentation</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>on</code></td><td>Allumer</td></tr>
+    <tr><td><code>off</code></td><td>Eteindre (veille)</td></tr>
+    <tr><td><code>status</code></td><td>Afficher l'etat</td></tr>
+</table>
+
+<h3>Volume</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>volume</code></td><td>Afficher le volume</td></tr>
+    <tr><td><code>volume 50</code></td><td>Regler a 50%</td></tr>
+    <tr><td><code>volume_up</code>, <code>volume_down</code></td><td>+/- volume</td></tr>
+</table>
+
+<h3>Applications</h3>
+
+<table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>apps</code></td><td>Lister les apps installees</td></tr>
+    <tr><td><code>launch &lt;app&gt;</code></td><td>Lancer une app</td></tr>
+    <tr><td><code>apps_sync</code></td><td>Synchroniser apps.json</td></tr>
+</table>
+
+<h3 id="actions">Actions de scenario</h3>
 
 <table>
     <tr><th>Action</th><th>Parametres</th><th>Description</th></tr>
     <tr><td><code>launch</code></td><td><code>app</code></td><td>Lancer une application</td></tr>
-    <tr><td><code>wait</code></td><td><code>seconds</code></td><td>Attendre N secondes</td></tr>
-    <tr><td><code>up/down/left/right</code></td><td><code>repeat</code>, <code>delay</code></td><td>Navigation (boutons)</td></tr>
-    <tr><td><code>select/menu/home</code></td><td><code>repeat</code>, <code>delay</code></td><td>Boutons</td></tr>
-    <tr><td><code>play/pause/play_pause</code></td><td><code>delay</code></td><td>Controle lecture</td></tr>
-    <tr><td><code>swipe_up/swipe_down</code></td><td><code>repeat</code>, <code>delay</code></td><td>Glissement vertical (touchpad)</td></tr>
-    <tr><td><code>swipe_left/swipe_right</code></td><td><code>repeat</code>, <code>delay</code></td><td>Glissement horizontal (touchpad)</td></tr>
+    <tr><td><code>wait</code></td><td><code>seconds</code></td><td>Pause fixe</td></tr>
+    <tr><td><code>scenario</code></td><td><code>name</code></td><td>Executer un sous-scenario</td></tr>
+    <tr><td>Navigation</td><td><code>repeat</code>, <code>delay</code></td><td>up/down/left/right/select/menu/home</td></tr>
+    <tr><td>Swipe</td><td><code>repeat</code>, <code>delay</code></td><td>swipe_up/down/left/right</td></tr>
+    <tr><td>Lecture</td><td><code>delay</code></td><td>play/pause/play_pause</td></tr>
 </table>
-
-<p><strong>Parametres optionnels :</strong></p>
-
-<table>
-    <tr><th>Parametre</th><th>Defaut</th><th>Description</th></tr>
-    <tr><td><code>repeat</code></td><td><code>1</code></td><td>Nombre de repetitions de l'action</td></tr>
-    <tr><td><code>delay</code></td><td><code>0.5</code></td><td>Pause apres chaque action (en secondes)</td></tr>
-</table>
-
-<p><strong>Exemple avec delay personnalise :</strong></p>
-
-<pre><code class="language-json">{
-  "navigation_lente": {
-    "description": "Navigation avec delai plus long",
-    "steps": [
-      {"action": "down", "repeat": 3, "delay": 1.0},
-      {"action": "right", "delay": 0.8},
-      {"action": "select"}
-    ]
-  }
-}</code></pre>
-
-<h3 id="planification">Planification</h3>
-
-<p>Executez automatiquement des scenarios a des heures definies.</p>
-
-<table>
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>schedules</code></td><td>Lister les planifications</td></tr>
-    <tr><td><code>schedule-add</code></td><td>Ajouter une planification (interactif)</td></tr>
-    <tr><td><code>schedule-remove &lt;id&gt;</code></td><td>Supprimer une planification</td></tr>
-    <tr><td><code>scheduler</code></td><td>Lancer le daemon</td></tr>
-    <tr><td><code>scheduler --daemon</code></td><td>Lancer en arriere-plan</td></tr>
-</table>
-
-<p>Lister les planifications :</p>
-<div class="cmd"><code>python3 apple_tv_power.py schedules</code><button class="copy-btn">Copier</button></div>
-
-<p>Ajouter une planification (interactif) :</p>
-<div class="cmd"><code>python3 apple_tv_power.py schedule-add</code><button class="copy-btn">Copier</button></div>
-
-<p>Supprimer la planification #0 :</p>
-<div class="cmd"><code>python3 apple_tv_power.py schedule-remove 0</code><button class="copy-btn">Copier</button></div>
-
-<p>Lancer le daemon (premier plan) :</p>
-<div class="cmd"><code>python3 apple_tv_power.py scheduler</code><button class="copy-btn">Copier</button></div>
-
-<p>Lancer le daemon en arriere-plan :</p>
-<div class="cmd"><code>python3 apple_tv_power.py scheduler --daemon</code><button class="copy-btn">Copier</button></div>
-
-<h4>Configuration des planifications (schedule.json)</h4>
-
-<pre><code class="language-json">{
-  "schedules": [
-    {
-      "scenario": "netflix_profil1",
-      "device": "Salon",
-      "time": {"hour": 20, "minute": 0},
-      "weekdays": [1, 2, 3, 4, 5],
-      "enabled": true
-    }
-  ]
-}</code></pre>
-
-<table>
-    <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
-    <tr><td><code>scenario</code></td><td>string</td><td>Nom du scenario (de scenarios.json)</td></tr>
-    <tr><td><code>device</code></td><td>string</td><td>Nom de l'Apple TV</td></tr>
-    <tr><td><code>time</code></td><td>object</td><td><code>{"hour": 0-23, "minute": 0-59}</code></td></tr>
-    <tr><td><code>weekdays</code></td><td>array</td><td>Jours (0=Dim, 1=Lun, ..., 6=Sam). Optionnel</td></tr>
-    <tr><td><code>enabled</code></td><td>bool</td><td>Activer/desactiver sans supprimer</td></tr>
-</table>
-
-<h3 id="serveur-http">Serveur HTTP</h3>
-
-<p>Lancez un serveur HTTP pour declencher des scenarios depuis l'app Raccourcis iOS ou tout autre client HTTP.</p>
-
-<table>
-    <tr><th>Commande</th><th>Description</th></tr>
-    <tr><td><code>server</code></td><td>Lancer le serveur HTTP (port 8888)</td></tr>
-    <tr><td><code>server --port 9000</code></td><td>Lancer sur un port specifique</td></tr>
-</table>
-
-<p>Lancer le serveur :</p>
-<div class="cmd"><code>python3 apple_tv_power.py server</code><button class="copy-btn">Copier</button></div>
-
-<p>Lancer sur un port specifique :</p>
-<div class="cmd"><code>python3 apple_tv_power.py server --port 9000</code><button class="copy-btn">Copier</button></div>
-
-<h4>Endpoints API</h4>
-
-<table>
-    <tr><th>Methode</th><th>Endpoint</th><th>Description</th></tr>
-    <tr><td>GET</td><td><code>/health</code></td><td>Verifier que le serveur tourne</td></tr>
-    <tr><td>GET</td><td><code>/scenarios</code></td><td>Lister les scenarios disponibles</td></tr>
-    <tr><td>POST</td><td><code>/scenario/{name}?device=Salon</code></td><td>Executer un scenario</td></tr>
-    <tr><td>POST</td><td><code>/shutdown</code></td><td>Arreter le serveur proprement</td></tr>
-</table>
-
-<h4>Exemples avec curl</h4>
-
-<p>Health check :</p>
-<div class="cmd"><code>curl http://localhost:8888/health</code><button class="copy-btn">Copier</button></div>
-
-<p>Lister les scenarios :</p>
-<div class="cmd"><code>curl http://localhost:8888/scenarios</code><button class="copy-btn">Copier</button></div>
-
-<p>Executer un scenario :</p>
-<div class="cmd"><code>curl -X POST "http://localhost:8888/scenario/netflix_profil1?device=Salon"</code><button class="copy-btn">Copier</button></div>
-
-<p>Arreter le serveur :</p>
-<div class="cmd"><code>curl -X POST http://localhost:8888/shutdown</code><button class="copy-btn">Copier</button></div>
-
-<h4>Reponses JSON</h4>
-
-<p><strong>GET /scenarios</strong></p>
-<pre><code class="language-json">{
-  "scenarios": ["netflix_profil1", "canal_direct", "youtube_home"]
-}</code></pre>
-
-<p><strong>POST /scenario/netflix_profil1?device=Salon</strong></p>
-<pre><code class="language-json">{
-  "success": true,
-  "scenario": "netflix_profil1",
-  "device": "Salon"
-}</code></pre>
-
-<h4>Usage avec Raccourcis iOS</h4>
-
-<ol>
-    <li>Ouvrir l'app Raccourcis</li>
-    <li>Creer un nouveau raccourci</li>
-    <li>Ajouter l'action "Obtenir le contenu de l'URL"</li>
-    <li>Configurer :
-        <ul>
-            <li>URL : <code>http://192.168.1.XX:8888/scenario/netflix_profil1?device=Salon</code></li>
-            <li>Methode : POST</li>
-        </ul>
-    </li>
-    <li>Optionnel : Ajouter "Afficher le resultat" pour voir la reponse</li>
-</ol>
-
-<hr>
-
-<h2 id="options">Options globales</h2>
-
-<table>
-    <tr><th>Option</th><th>Description</th></tr>
-    <tr><td><code>-d, --device</code></td><td>Nom ou index de l'appareil</td></tr>
-    <tr><td><code>-v, --verbose</code></td><td>Mode debug</td></tr>
-    <tr><td><code>-h, --help</code></td><td>Aide</td></tr>
-</table>
-
-<p><strong>Selection de l'appareil :</strong></p>
-
-<p>Par nom (recherche partielle) :</p>
-<div class="cmd"><code>python3 apple_tv_power.py on -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<p>Par index :</p>
-<div class="cmd"><code>python3 apple_tv_power.py on -d 0</code><button class="copy-btn">Copier</button></div>
-
-<p>Interactif (si plusieurs appareils) :</p>
-<div class="cmd"><code>python3 apple_tv_power.py on</code><button class="copy-btn">Copier</button></div>
-
-<hr>
-
-<h2 id="fichiers">Fichiers</h2>
-
-<table>
-    <tr><th>Fichier</th><th>Description</th></tr>
-    <tr><td><code>apple_tv_power.py</code></td><td>Script principal</td></tr>
-    <tr><td><code>credentials.json</code></td><td>Credentials d'appairage</td></tr>
-    <tr><td><code>apps.json</code></td><td>Alias des applications</td></tr>
-    <tr><td><code>scenarios.json</code></td><td>Configuration des scenarios</td></tr>
-    <tr><td><code>schedule.json</code></td><td>Planifications horaires</td></tr>
-    <tr><td><code>scheduler.log</code></td><td>Logs du daemon (si --daemon)</td></tr>
-</table>
-
-<hr>
-
-<h2 id="exemples">Exemples</h2>
-
-<h3>Lancer Netflix a 20h en semaine</h3>
-
-<p>Ajouter via l'interface interactive :</p>
-<div class="cmd"><code>python3 apple_tv_power.py schedule-add</code><button class="copy-btn">Copier</button></div>
-
-<p>Ou editer <code>schedule.json</code> directement.</p>
-
-<h3>Script d'extinction automatique</h3>
-
-<div class="cmd"><code>#!/bin/bash</code><button class="copy-btn">Copier</button></div>
-<div class="cmd"><code>python3 apple_tv_power.py off -d "Salon"</code><button class="copy-btn">Copier</button></div>
-
-<h3>Demarrer le scheduler au boot (macOS)</h3>
-
-<p>Creer <code>~/Library/LaunchAgents/com.appletv.scheduler.plist</code> :</p>
-
-<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
-&lt;plist version="1.0"&gt;
-&lt;dict&gt;
-    &lt;key&gt;Label&lt;/key&gt;
-    &lt;string&gt;com.appletv.scheduler&lt;/string&gt;
-    &lt;key&gt;ProgramArguments&lt;/key&gt;
-    &lt;array&gt;
-        &lt;string&gt;/usr/bin/python3&lt;/string&gt;
-        &lt;string&gt;/chemin/vers/apple_tv_power.py&lt;/string&gt;
-        &lt;string&gt;scheduler&lt;/string&gt;
-    &lt;/array&gt;
-    &lt;key&gt;RunAtLoad&lt;/key&gt;
-    &lt;true/&gt;
-    &lt;key&gt;KeepAlive&lt;/key&gt;
-    &lt;true/&gt;
-&lt;/dict&gt;
-&lt;/plist&gt;</code></pre>
-
-<div class="cmd"><code>launchctl load ~/Library/LaunchAgents/com.appletv.scheduler.plist</code><button class="copy-btn">Copier</button></div>
 
 <hr>
 
 <h2 id="depannage">Depannage</h2>
 
-<h3>"Aucune Apple TV trouvee"</h3>
-<ul>
-    <li>Verifiez que l'Apple TV est allumee</li>
-    <li>Verifiez que vous etes sur le meme reseau Wi-Fi</li>
-</ul>
+<h3 id="aucune-apple-tv">Aucune Apple TV trouvee</h3>
 
-<h3>"Erreur d'authentification"</h3>
-<p>Refaites un appairage :</p>
+<p><strong>Symptome :</strong> <code>python3 apple_tv_power.py scan</code> ne retourne rien.</p>
+
+<p><strong>Solutions :</strong></p>
+
+<ol>
+    <li><strong>Verifiez que l'Apple TV est allumee</strong>
+        <ul>
+            <li>L'ecran doit etre actif (pas en veille profonde)</li>
+            <li>Essayez d'appuyer sur la telecommande physique d'abord</li>
+        </ul>
+    </li>
+    <li><strong>Verifiez le reseau</strong>
+        <ul>
+            <li>Mac et Apple TV doivent etre sur le <strong>meme reseau Wi-Fi</strong></li>
+            <li>Certains routeurs isolent les appareils - desactivez cette option</li>
+        </ul>
+    </li>
+    <li><strong>Verifiez le pare-feu Mac</strong>
+        <ul>
+            <li>Preferences Systeme > Securite > Pare-feu</li>
+            <li>Ajoutez Python aux exceptions</li>
+        </ul>
+    </li>
+</ol>
+
+<h3>Erreur d'appairage</h3>
+
+<p><strong>Symptome :</strong> Le PIN ne fonctionne pas ou l'appairage echoue.</p>
+
+<p><strong>Solutions :</strong></p>
+
+<ol>
+    <li><strong>Assurez-vous d'entrer le code rapidement</strong> - Le PIN expire apres ~30 secondes</li>
+    <li><strong>Supprimez les anciens credentials :</strong></li>
+</ol>
+
+<div class="cmd"><code>rm credentials.json</code><button class="copy-btn">Copier</button></div>
 <div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
 
-<h3>"Fonctionnalite non disponible"</h3>
-<p>Vous devez d'abord appairer l'appareil :</p>
-<div class="cmd"><code>python3 apple_tv_power.py pair -d "Salon"</code><button class="copy-btn">Copier</button></div>
+<h3>Connexion impossible depuis iPhone</h3>
+
+<p><strong>Symptome :</strong> "Connexion impossible" dans Raccourcis iOS.</p>
+
+<p><strong>Solutions :</strong></p>
+
+<ol>
+    <li>Verifiez que le serveur tourne : <code>curl http://localhost:8888/health</code></li>
+    <li>Verifiez l'IP : <code>ipconfig getifaddr en0</code></li>
+    <li>Testez depuis le Mac avec l'IP externe</li>
+    <li>Verifiez le pare-feu (desactivez temporairement pour tester)</li>
+    <li>Verifiez que iPhone et Mac sont sur le meme Wi-Fi</li>
+</ol>
+
+<h3>Erreur 405 Method Not Allowed</h3>
+
+<p><strong>Symptome :</strong> Le raccourci retourne "405 Method Not Allowed".</p>
+
+<p><strong>Solution :</strong> Vous utilisez GET au lieu de POST. Dans le raccourci, changez <strong>Methode</strong> de "GET" a <strong>"POST"</strong>.</p>
 
 <h3>Mode debug</h3>
-<p>Utilisez <code>-v</code> pour plus de details :</p>
-<div class="cmd"><code>python3 apple_tv_power.py on -d "Salon" -v</code><button class="copy-btn">Copier</button></div>
+
+<p>Pour plus de details sur les erreurs :</p>
+
+<div class="cmd"><code>python3 apple_tv_power.py scenario mon_scenario -d "Salon" -v</code><button class="copy-btn">Copier</button></div>
+
+<hr>
+
+<h2 id="fichiers">Fichiers de configuration</h2>
+
+<table>
+    <tr><th>Fichier</th><th>Description</th></tr>
+    <tr><td><code>credentials.json</code></td><td>Credentials d'appairage (ne pas partager)</td></tr>
+    <tr><td><code>apps.json</code></td><td>Alias des applications</td></tr>
+    <tr><td><code>scenarios.json</code></td><td>Vos scenarios</td></tr>
+    <tr><td><code>schedule.json</code></td><td>Planifications horaires</td></tr>
+</table>
+
+<h3>apps.json</h3>
+
+<p>Alias pour les bundle IDs des applications :</p>
+
+<pre><code class="language-json">{
+  "netflix": "com.netflix.Netflix",
+  "youtube": "com.google.ios.youtube",
+  "disney": "com.disney.disneyplus",
+  "prime": "com.amazon.aiv.AIVApp"
+}</code></pre>
+
+<blockquote class="info">
+    Utilisez <code>python3 apple_tv_power.py apps -d "Salon"</code> pour voir les bundle IDs.
+</blockquote>
 
 </main>
 
 <script>
-// Handle copy buttons for individual command lines
 document.querySelectorAll('.cmd .copy-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
         var code = btn.parentElement.querySelector('code');
@@ -690,41 +688,9 @@ document.querySelectorAll('.cmd .copy-btn').forEach(function(btn) {
         });
     });
 });
-
-// Handle table copy icon buttons
-document.querySelectorAll('.copy-icon').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        var cmd = btn.getAttribute('data-cmd');
-        var fullCmd = 'python3 apple_tv_power.py ' + cmd + ' -d "Salon"';
-        navigator.clipboard.writeText(fullCmd).then(function() {
-            btn.classList.add('copied');
-            setTimeout(function() {
-                btn.classList.remove('copied');
-            }, 1000);
-        });
-    });
-});
-
-// Handle Quick Start block copy button
-document.querySelectorAll('.copy-block-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        var pre = btn.parentElement.querySelector('pre code');
-        var text = pre.textContent;
-        navigator.clipboard.writeText(text).then(function() {
-            btn.textContent = 'Copie!';
-            btn.classList.add('copied');
-            setTimeout(function() {
-                btn.textContent = 'Copier';
-                btn.classList.remove('copied');
-            }, 2000);
-        });
-    });
-});
 </script>
-<!-- PrismJS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
 </body>
 </html>

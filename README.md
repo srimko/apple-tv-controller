@@ -1,429 +1,304 @@
 # Apple TV Controller
 
-Script Python pour controler une Apple TV via le reseau local en utilisant la bibliotheque [pyatv](https://pyatv.dev/).
+Controlez votre Apple TV depuis le terminal ou via des raccourcis iOS. Basé sur [pyatv](https://pyatv.dev/).
 
-## Quick Start
+## Table des matieres
 
-Controlez votre Apple TV en 4 commandes. Remplacez "Salon" par le nom de votre Apple TV (visible dans Reglages > General > Nom).
+- [Demarrage rapide (5 min)](#demarrage-rapide-5-min)
+- [Tutoriel : Votre premier scenario](#tutoriel--votre-premier-scenario)
+- [Scenarios prets a l'emploi](#scenarios-prets-a-lemploi)
+- [Integration Raccourcis iOS](#integration-raccourcis-ios)
+- [Reference des commandes](#reference-des-commandes)
+- [Depannage](#depannage)
+
+---
+
+## Demarrage rapide (5 min)
+
+### Prerequis
+
+- Python 3.9+
+- Apple TV sur le meme reseau Wi-Fi que votre Mac
+- Nom de votre Apple TV (visible dans **Reglages > General > Informations > Nom**)
+
+### Etape 1 : Installation
 
 ```bash
+# Cloner le projet
+git clone https://github.com/username/apple-tv-controller.git
+cd apple-tv-controller
+
 # Installer les dependances
 pip install pyatv aiohttp
+```
 
-# Trouver les Apple TV sur votre reseau
+### Etape 2 : Decouvrir votre Apple TV
+
+```bash
 python3 apple_tv_power.py scan
-# ou: python3 -m apple_tv scan
+```
 
-# Appairer (un code PIN s'affiche sur la TV)
+Resultat attendu :
+```
+[0] Salon
+    Adresse: 192.168.1.91
+    Protocoles: AirPlay, Companion, RAOP
+```
+
+> **Pas de resultat ?** Voir [Depannage > Aucune Apple TV trouvee](#aucune-apple-tv-trouvee)
+
+### Etape 3 : Appairer
+
+```bash
 python3 apple_tv_power.py pair -d "Salon"
+```
 
-# Tester : appuie sur le bouton "OK"
+1. Un code PIN a 4 chiffres s'affiche sur votre TV
+2. Entrez-le dans le terminal
+3. Les credentials sont sauvegardes automatiquement
+
+> **Erreur ?** Voir [Depannage > Erreur d'appairage](#erreur-dappairage)
+
+### Etape 4 : Tester
+
+```bash
+# Appuyer sur OK
 python3 apple_tv_power.py select -d "Salon"
-```
 
----
-
-## Installation
-
-```bash
-pip install pyatv aiohttp
-```
-
-## Configuration initiale
-
-### 1. Scanner les appareils disponibles
-
-```bash
-python3 apple_tv_power.py scan
-```
-
-Affiche tous les appareils Apple TV/AirPlay sur le reseau avec leur nom, adresse IP et protocoles supportes.
-
-### 2. Appairer avec une Apple TV
-
-```bash
-python3 apple_tv_power.py pair -d "Salon"
-```
-
-Un code PIN s'affiche sur l'ecran de l'Apple TV. Entrez-le dans le terminal pour valider l'appairage.
-
-Les credentials sont sauvegardes dans `credentials.json` et reutilises automatiquement.
-
----
-
-## Commandes disponibles
-
-### Aide
-
-```bash
-python3 apple_tv_power.py --help           # Aide generale
-python3 apple_tv_power.py <commande> --help # Aide pour une commande
-```
-
-### Alimentation
-
-| Commande | Description |
-|----------|-------------|
-| `on` | Allumer l'Apple TV |
-| `off` | Eteindre l'Apple TV (mise en veille) |
-| `status` | Afficher l'etat d'alimentation |
-
-```bash
-python3 apple_tv_power.py on -d "Salon"
-python3 apple_tv_power.py off -d "Salon"
-python3 apple_tv_power.py status -d "Salon"
-```
-
-### Lecture
-
-| Commande | Description |
-|----------|-------------|
-| `play` | Lancer la lecture |
-| `pause` | Mettre en pause |
-| `play_pause` | Toggle lecture/pause |
-| `stop` | Arreter la lecture |
-| `next` | Piste/chapitre suivant |
-| `previous` | Piste/chapitre precedent |
-
-```bash
-python3 apple_tv_power.py play -d "Salon"
-python3 apple_tv_power.py pause -d "Salon"
-```
-
-### Telecommande
-
-| Commande | Description |
-|----------|-------------|
-| `up` | Fleche haut |
-| `down` | Fleche bas |
-| `left` | Fleche gauche |
-| `right` | Fleche droite |
-| `select` | Bouton OK/Selection |
-| `menu` | Bouton Menu (retour) |
-| `home` | Bouton Home (accueil) |
-
-```bash
+# Naviguer
 python3 apple_tv_power.py up -d "Salon"
-python3 apple_tv_power.py select -d "Salon"
+python3 apple_tv_power.py down -d "Salon"
 ```
 
-### Touch (Swipe)
+**Vous etes pret !** Continuez avec le tutoriel ci-dessous.
 
-Gestes tactiles sur le touchpad de la telecommande Siri Remote.
+---
 
-| Commande | Description |
-|----------|-------------|
-| `swipe_up` | Glissement vers le haut |
-| `swipe_down` | Glissement vers le bas |
-| `swipe_left` | Glissement vers la gauche |
-| `swipe_right` | Glissement vers la droite |
+## Tutoriel : Votre premier scenario
 
-**Note :** Ces commandes ne sont disponibles que dans les scenarios, pas en ligne de commande directe.
+Un scenario est une sequence d'actions automatisees. Exemple : lancer Netflix et selectionner un profil.
 
-**Exemple 1 : Defiler dans une liste**
-
-```json
-{
-  "scroll_list": {
-    "description": "Faire defiler une liste vers le bas",
-    "steps": [
-      {"action": "swipe_down", "repeat": 5},
-      {"action": "select"}
-    ]
-  }
-}
-```
-
-**Exemple 2 : Navigation horizontale (caroussel)**
-
-```json
-{
-  "browse_carousel": {
-    "description": "Parcourir un caroussel horizontal",
-    "steps": [
-      {"action": "swipe_right", "repeat": 3},
-      {"action": "wait", "seconds": 1},
-      {"action": "swipe_left"},
-      {"action": "select"}
-    ]
-  }
-}
-```
-
-### Volume
-
-| Commande | Description |
-|----------|-------------|
-| `volume_up` | Augmenter le volume |
-| `volume_down` | Baisser le volume |
-| `volume` | Afficher le volume actuel |
-| `volume <0-100>` | Regler le volume |
+### Etape 1 : Creer le fichier scenarios.json
 
 ```bash
-python3 apple_tv_power.py volume -d "Salon"
-python3 apple_tv_power.py volume 50 -d "Salon"
-```
-
-### Applications
-
-| Commande | Description |
-|----------|-------------|
-| `apps` | Lister les applications installees |
-| `apps_config` | Afficher la configuration des alias |
-| `apps_sync` | Synchroniser apps.json avec l'Apple TV |
-| `launch <app>` | Lancer une application |
-
-```bash
-python3 apple_tv_power.py apps -d "Salon"
-python3 apple_tv_power.py apps_config
-python3 apple_tv_power.py launch netflix -d "Salon"
-```
-
-#### Configuration des applications (apps.json)
-
-Le fichier `apps.json` contient les alias pour les applications :
-
-```json
-{
-  "netflix": "com.netflix.Netflix",
-  "youtube": "com.google.ios.youtube",
-  "disney": "com.disney.disneyplus"
-}
-```
-
-### Scenarios
-
-Les scenarios permettent d'automatiser des sequences d'actions.
-
-| Commande | Description |
-|----------|-------------|
-| `scenarios` | Lister les scenarios disponibles |
-| `scenario <nom>` | Executer un scenario |
-
-```bash
+# Voir les scenarios existants
 python3 apple_tv_power.py scenarios
-python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"
 ```
 
-#### Configuration des scenarios (scenarios.json)
+### Etape 2 : Ajouter votre scenario
+
+Editez `scenarios.json` :
 
 ```json
 {
   "netflix_profil1": {
-    "description": "Lancer Netflix et selectionner le premier profil",
+    "description": "Lancer Netflix et selectionner le 1er profil",
     "steps": [
       {"action": "launch", "app": "netflix"},
-      {"action": "wait", "seconds": 3},
+      {"action": "wait", "seconds": 4},
       {"action": "select"}
     ]
   }
 }
 ```
 
-**Actions disponibles :**
-
-| Action | Parametres | Description |
-|--------|------------|-------------|
-| `launch` | `app` | Lancer une application |
-| `wait` | `seconds` | Attendre N secondes |
-| `up/down/left/right` | `repeat`, `delay` | Navigation (boutons) |
-| `select/menu/home` | `repeat`, `delay` | Boutons |
-| `play/pause/play_pause` | `delay` | Controle lecture |
-| `swipe_up/swipe_down` | `repeat`, `delay` | Glissement vertical (touchpad) |
-| `swipe_left/swipe_right` | `repeat`, `delay` | Glissement horizontal (touchpad) |
-
-**Parametres optionnels :**
-
-| Parametre | Defaut | Description |
-|-----------|--------|-------------|
-| `repeat` | `1` | Nombre de repetitions de l'action |
-| `delay` | `0.5` | Pause apres chaque action (en secondes) |
-
-**Exemple avec delay personnalise :**
-
-```json
-{
-  "navigation_lente": {
-    "description": "Navigation avec delai plus long",
-    "steps": [
-      {"action": "down", "repeat": 3, "delay": 1.0},
-      {"action": "right", "delay": 0.8},
-      {"action": "select"}
-    ]
-  }
-}
-```
-
-### Planification
-
-Executez automatiquement des scenarios a des heures definies.
-
-| Commande | Description |
-|----------|-------------|
-| `schedules` | Lister les planifications |
-| `schedule-add` | Ajouter une planification (interactif) |
-| `schedule-remove <id>` | Supprimer une planification |
-| `scheduler` | Lancer le daemon |
-| `scheduler --daemon` | Lancer en arriere-plan |
-
-### Serveur HTTP
-
-Lancez un serveur HTTP pour declencher des scenarios depuis l'app Raccourcis iOS ou tout autre client HTTP.
-
-| Commande | Description |
-|----------|-------------|
-| `server` | Lancer le serveur HTTP (port 8888) |
-| `server --port 9000` | Lancer sur un port specifique |
+### Etape 3 : Executer
 
 ```bash
-# Lister les planifications
-python3 apple_tv_power.py schedules
-
-# Ajouter une planification (interactif)
-python3 apple_tv_power.py schedule-add
-
-# Supprimer la planification #0
-python3 apple_tv_power.py schedule-remove 0
-
-# Lancer le daemon (premier plan)
-python3 apple_tv_power.py scheduler
-
-# Lancer le daemon en arriere-plan
-python3 apple_tv_power.py scheduler --daemon
+python3 apple_tv_power.py scenario netflix_profil1 -d "Salon"
 ```
 
-#### Configuration des planifications (schedule.json)
+### Etape 4 : Ajuster le timing
+
+Si ca va trop vite, augmentez le `wait` ou ajoutez un `delay` :
 
 ```json
 {
-  "schedules": [
-    {
-      "scenario": "netflix_profil1",
-      "device": "Salon",
-      "time": {"hour": 20, "minute": 0},
-      "weekdays": [1, 2, 3, 4, 5],
-      "enabled": true
-    }
-  ]
+  "netflix_profil1": {
+    "description": "Lancer Netflix (version lente)",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 5},
+      {"action": "down", "delay": 1.0},
+      {"action": "select"}
+    ]
+  }
 }
 ```
 
-| Champ | Type | Description |
-|-------|------|-------------|
-| `scenario` | string | Nom du scenario (de scenarios.json) |
-| `device` | string | Nom de l'Apple TV |
-| `time` | object | `{"hour": 0-23, "minute": 0-59}` |
-| `weekdays` | array | Jours (0=Dim, 1=Lun, ..., 6=Sam). Optionnel |
-| `enabled` | bool | Activer/desactiver sans supprimer |
+### Comprendre les parametres
 
-#### API HTTP
+| Parametre | Description | Defaut |
+|-----------|-------------|--------|
+| `action` | L'action a executer (obligatoire) | - |
+| `wait` + `seconds` | Pause fixe en secondes | - |
+| `delay` | Pause apres l'action | 0.5s |
+| `repeat` | Nombre de repetitions | 1 |
 
-Lancer le serveur :
+---
+
+## Scenarios prets a l'emploi
+
+Copiez ces scenarios dans votre `scenarios.json`.
+
+### Netflix - Selectionner un profil
+
+```json
+{
+  "netflix_profil1": {
+    "description": "Netflix - Premier profil",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 4},
+      {"action": "select"}
+    ]
+  },
+  "netflix_profil2": {
+    "description": "Netflix - Deuxieme profil",
+    "steps": [
+      {"action": "launch", "app": "netflix"},
+      {"action": "wait", "seconds": 4},
+      {"action": "right"},
+      {"action": "select"}
+    ]
+  }
+}
+```
+
+### YouTube - Accueil
+
+```json
+{
+  "youtube_home": {
+    "description": "Ouvrir YouTube sur l'accueil",
+    "steps": [
+      {"action": "launch", "app": "youtube"},
+      {"action": "wait", "seconds": 3},
+      {"action": "menu"},
+      {"action": "menu"}
+    ]
+  }
+}
+```
+
+### Fermer toutes les apps
+
+```json
+{
+  "close_apps": {
+    "description": "Fermer les apps en arriere-plan",
+    "steps": [
+      {"action": "home_double"},
+      {"action": "wait", "seconds": 1},
+      {"action": "swipe_up", "repeat": 5, "delay": 0.3}
+    ]
+  }
+}
+```
+
+### Routine du soir
+
+```json
+{
+  "bonne_nuit": {
+    "description": "Fermer les apps et eteindre",
+    "steps": [
+      {"action": "scenario", "name": "close_apps"},
+      {"action": "wait", "seconds": 1},
+      {"action": "home"},
+      {"action": "wait", "seconds": 0.5}
+    ]
+  }
+}
+```
+
+> **Note :** L'action `scenario` permet d'inclure un scenario dans un autre.
+
+### Disney+ - Continuer a regarder
+
+```json
+{
+  "disney_continue": {
+    "description": "Disney+ - Reprendre la lecture",
+    "steps": [
+      {"action": "launch", "app": "disney"},
+      {"action": "wait", "seconds": 4},
+      {"action": "down"},
+      {"action": "select"}
+    ]
+  }
+}
+```
+
+---
+
+## Integration Raccourcis iOS
+
+Declenchez vos scenarios depuis votre iPhone avec l'app Raccourcis.
+
+### Etape 1 : Lancer le serveur HTTP
+
+Sur votre Mac (laissez le terminal ouvert) :
+
 ```bash
 python3 apple_tv_power.py server
 ```
 
-Endpoints disponibles :
+Resultat :
+```
+Serveur HTTP demarre sur http://0.0.0.0:8888
+```
 
-| Methode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/health` | Verifier que le serveur tourne |
-| GET | `/scenarios` | Lister les scenarios disponibles |
-| POST | `/scenario/{name}?device=Salon` | Executer un scenario |
-| POST | `/shutdown` | Arreter le serveur proprement |
+### Etape 2 : Trouver l'IP de votre Mac
 
-Exemples avec curl :
 ```bash
-# Health check
-curl http://localhost:8888/health
+ipconfig getifaddr en0
+```
+
+Exemple : `192.168.1.50`
+
+### Etape 3 : Tester avec curl
+
+```bash
+# Verifier que le serveur repond
+curl http://192.168.1.50:8888/health
 
 # Lister les scenarios
-curl http://localhost:8888/scenarios
+curl http://192.168.1.50:8888/scenarios
 
 # Executer un scenario
-curl -X POST "http://localhost:8888/scenario/netflix_profil1?device=Salon"
-
-# Arreter le serveur
-curl -X POST http://localhost:8888/shutdown
+curl -X POST "http://192.168.1.50:8888/scenario/netflix_profil1?device=Salon"
 ```
 
-#### Usage avec Raccourcis iOS
+### Etape 4 : Creer le raccourci iOS
 
-1. Ouvrir l'app Raccourcis
-2. Creer un nouveau raccourci
-3. Ajouter l'action "Obtenir le contenu de l'URL"
+1. Ouvrir l'app **Raccourcis** sur iPhone
+2. Appuyer sur **+** (nouveau raccourci)
+3. **Ajouter une action** > chercher **"Obtenir le contenu de l'URL"**
 4. Configurer :
-   - URL : `http://192.168.1.XX:8888/scenario/netflix_profil1?device=Salon`
-   - Methode : POST
-5. Optionnel : Ajouter "Afficher le resultat" pour voir la reponse
+   - **URL** : `http://192.168.1.50:8888/scenario/netflix_profil1?device=Salon`
+   - Appuyer sur **Afficher plus**
+   - **Methode** : `POST`
+5. Renommer le raccourci (ex: "Netflix Salon")
+6. Optionnel : **Ajouter a l'ecran d'accueil**
 
----
+### Etape 5 : Utiliser
 
-## Options globales
+- Tap sur l'icone de l'ecran d'accueil
+- Ou dire **"Dis Siri, Netflix Salon"**
 
-| Option | Description |
-|--------|-------------|
-| `-d, --device` | Nom ou index de l'appareil |
-| `-v, --verbose` | Mode debug |
-| `-h, --help` | Aide |
+### Endpoints disponibles
 
-**Selection de l'appareil :**
+| Methode | URL | Description |
+|---------|-----|-------------|
+| GET | `/health` | Verifier que le serveur tourne |
+| GET | `/scenarios` | Lister les scenarios |
+| POST | `/scenario/{nom}?device=Salon` | Executer un scenario |
+| POST | `/shutdown` | Arreter le serveur |
 
-```bash
-# Par nom (recherche partielle)
-python3 apple_tv_power.py on -d "Salon"
+### Lancer le serveur au demarrage (macOS)
 
-# Par index
-python3 apple_tv_power.py on -d 0
-
-# Interactif (si plusieurs appareils)
-python3 apple_tv_power.py on
-```
-
----
-
-## Fichiers
-
-| Fichier | Description |
-|---------|-------------|
-| `apple_tv_power.py` | Point d'entree (wrapper) |
-| `apple_tv/` | Package Python |
-| `apple_tv/cli.py` | Interface ligne de commande |
-| `apple_tv/config.py` | Configuration et constantes |
-| `apple_tv/connection.py` | Connexion et appairage |
-| `apple_tv/controls.py` | Controles (power, lecture, volume) |
-| `apple_tv/apps.py` | Gestion des applications |
-| `apple_tv/scenarios.py` | Execution des scenarios |
-| `apple_tv/scheduler.py` | Planification |
-| `apple_tv/server.py` | Serveur HTTP |
-| `credentials.json` | Credentials d'appairage |
-| `apps.json` | Alias des applications |
-| `scenarios.json` | Configuration des scenarios |
-| `schedule.json` | Planifications horaires |
-
----
-
-## Exemples
-
-### Lancer Netflix a 20h en semaine
-
-```bash
-# Ajouter via l'interface interactive
-python3 apple_tv_power.py schedule-add
-
-# Ou editer schedule.json directement
-```
-
-### Script d'extinction automatique
-
-```bash
-#!/bin/bash
-python3 apple_tv_power.py off -d "Salon"
-```
-
-### Demarrer le scheduler au boot (macOS)
-
-Creer `~/Library/LaunchAgents/com.appletv.scheduler.plist` :
+Creer `~/Library/LaunchAgents/com.appletv.server.plist` :
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -431,12 +306,12 @@ Creer `~/Library/LaunchAgents/com.appletv.scheduler.plist` :
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.appletv.scheduler</string>
+    <string>com.appletv.server</string>
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/chemin/vers/apple_tv_power.py</string>
-        <string>scheduler</string>
+        <string>/chemin/complet/vers/apple_tv_power.py</string>
+        <string>server</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -447,35 +322,227 @@ Creer `~/Library/LaunchAgents/com.appletv.scheduler.plist` :
 ```
 
 ```bash
-launchctl load ~/Library/LaunchAgents/com.appletv.scheduler.plist
+launchctl load ~/Library/LaunchAgents/com.appletv.server.plist
 ```
+
+---
+
+## Reference des commandes
+
+### Telecommande
+
+| Commande | Description |
+|----------|-------------|
+| `up`, `down`, `left`, `right` | Navigation |
+| `select` | Bouton OK |
+| `menu` | Retour |
+| `home` | Ecran d'accueil |
+| `home_double` | App Switcher (double home) |
+
+### Touch (Swipe)
+
+| Commande | Description |
+|----------|-------------|
+| `swipe_up`, `swipe_down` | Glissement vertical |
+| `swipe_left`, `swipe_right` | Glissement horizontal |
+
+> **Note :** Les swipes sont disponibles uniquement dans les scenarios.
+
+### Lecture
+
+| Commande | Description |
+|----------|-------------|
+| `play`, `pause`, `play_pause` | Controle lecture |
+| `stop` | Arreter |
+| `next`, `previous` | Piste suivante/precedente |
+
+### Alimentation
+
+| Commande | Description |
+|----------|-------------|
+| `on` | Allumer |
+| `off` | Eteindre (veille) |
+| `status` | Afficher l'etat |
+
+### Volume
+
+| Commande | Description |
+|----------|-------------|
+| `volume` | Afficher le volume |
+| `volume 50` | Regler a 50% |
+| `volume_up`, `volume_down` | +/- volume |
+
+### Applications
+
+| Commande | Description |
+|----------|-------------|
+| `apps` | Lister les apps installees |
+| `launch <app>` | Lancer une app |
+| `apps_sync` | Synchroniser apps.json |
+
+### Actions de scenario
+
+| Action | Parametres | Description |
+|--------|------------|-------------|
+| `launch` | `app` | Lancer une application |
+| `wait` | `seconds` | Pause fixe |
+| `scenario` | `name` | Executer un sous-scenario |
+| Navigation | `repeat`, `delay` | up/down/left/right/select/menu/home |
+| Swipe | `repeat`, `delay` | swipe_up/down/left/right |
+| Lecture | `delay` | play/pause/play_pause |
 
 ---
 
 ## Depannage
 
-### "Aucune Apple TV trouvee"
+### Aucune Apple TV trouvee
 
-- Verifiez que l'Apple TV est allumee
-- Verifiez que vous etes sur le meme reseau Wi-Fi
+**Symptome :** `python3 apple_tv_power.py scan` ne retourne rien.
 
-### "Erreur d'authentification"
+**Solutions :**
 
-Refaites un appairage :
-```bash
-python3 apple_tv_power.py pair -d "Salon"
-```
+1. **Verifiez que l'Apple TV est allumee**
+   - L'ecran doit etre actif (pas en veille profonde)
+   - Essayez d'appuyer sur la telecommande physique d'abord
+
+2. **Verifiez le reseau**
+   - Mac et Apple TV doivent etre sur le **meme reseau Wi-Fi**
+   - Certains routeurs isolent les appareils (isolation client) - desactivez cette option
+
+3. **Attendez quelques secondes et reessayez**
+   - La decouverte peut prendre du temps
+   - Essayez : `python3 apple_tv_power.py scan` plusieurs fois
+
+4. **Verifiez le pare-feu Mac**
+   - Preferences Systeme > Securite > Pare-feu
+   - Ajoutez Python aux exceptions ou desactivez temporairement
+
+### Erreur d'appairage
+
+**Symptome :** Le PIN ne fonctionne pas ou l'appairage echoue.
+
+**Solutions :**
+
+1. **Assurez-vous d'entrer le code rapidement**
+   - Le PIN expire apres ~30 secondes
+
+2. **Supprimez les anciens credentials**
+   ```bash
+   rm credentials.json
+   python3 apple_tv_power.py pair -d "Salon"
+   ```
+
+3. **Redemarrez l'Apple TV**
+   - Reglages > Systeme > Redemarrer
 
 ### "Fonctionnalite non disponible"
 
-Vous devez d'abord appairer l'appareil :
-```bash
-python3 apple_tv_power.py pair -d "Salon"
-```
+**Symptome :** Certaines commandes ne fonctionnent pas.
+
+**Solutions :**
+
+1. **Verifiez l'appairage**
+   ```bash
+   python3 apple_tv_power.py pair -d "Salon"
+   ```
+
+2. **Certaines fonctionnalites necessitent que l'Apple TV soit active**
+   - Volume : necessite une app ouverte
+   - Swipe : necessite tvOS 15+
+
+### Connexion impossible depuis iPhone (Raccourcis)
+
+**Symptome :** "Connexion impossible" dans Raccourcis iOS.
+
+**Solutions :**
+
+1. **Verifiez que le serveur tourne**
+   ```bash
+   curl http://localhost:8888/health
+   ```
+
+2. **Verifiez l'IP**
+   ```bash
+   ipconfig getifaddr en0
+   ```
+
+3. **Testez depuis le Mac avec l'IP externe**
+   ```bash
+   curl http://192.168.x.x:8888/health
+   ```
+
+4. **Verifiez le pare-feu**
+   ```bash
+   # Desactiver temporairement
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
+
+   # Tester, puis reactiver
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+   ```
+
+5. **Verifiez que iPhone et Mac sont sur le meme Wi-Fi**
+
+### Erreur 405 Method Not Allowed (Raccourcis)
+
+**Symptome :** Le raccourci retourne "405 Method Not Allowed".
+
+**Solution :** Vous utilisez GET au lieu de POST.
+
+1. Ouvrir le raccourci
+2. Appuyer sur l'action "Obtenir le contenu de l'URL"
+3. Appuyer sur "Afficher plus"
+4. Changer **Methode** de "GET" a **"POST"**
+
+### Timeout lors de l'execution
+
+**Symptome :** "Timeout lors de l'execution du scenario".
+
+**Solutions :**
+
+1. **Reduisez les delais** dans votre scenario
+   ```json
+   {"action": "down", "delay": 0.3}
+   ```
+
+2. **Le timeout par defaut est de 2 minutes**
+   - Si votre scenario est tres long, divisez-le en plusieurs
 
 ### Mode debug
 
-Utilisez `-v` pour plus de details :
+Pour plus de details sur les erreurs :
+
 ```bash
-python3 apple_tv_power.py on -d "Salon" -v
+python3 apple_tv_power.py scenario mon_scenario -d "Salon" -v
 ```
+
+---
+
+## Fichiers de configuration
+
+| Fichier | Description |
+|---------|-------------|
+| `credentials.json` | Credentials d'appairage (ne pas partager) |
+| `apps.json` | Alias des applications |
+| `scenarios.json` | Vos scenarios |
+| `schedule.json` | Planifications horaires |
+
+### apps.json
+
+Alias pour les bundle IDs des applications :
+
+```json
+{
+  "netflix": "com.netflix.Netflix",
+  "youtube": "com.google.ios.youtube",
+  "disney": "com.disney.disneyplus",
+  "prime": "com.amazon.aiv.AIVApp"
+}
+```
+
+> Utilisez `python3 apple_tv_power.py apps -d "Salon"` pour voir les bundle IDs.
+
+---
+
+## Licence
+
+MIT
